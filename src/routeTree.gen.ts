@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as ProdutosRouteImport } from './routes/produtos'
 import { Route as PTokenRouteImport } from './routes/p.$token'
 import { Route as PropostasIndexRouteImport } from './routes/propostas.index'
 import { Route as PropostasNovaRouteImport } from './routes/propostas.nova'
@@ -25,6 +27,16 @@ const IndexRoute = IndexRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutosRoute = ProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PTokenRoute = PTokenRouteImport.update({
@@ -56,6 +68,8 @@ const PropostasIdEditarRoute = PropostasIdEditarRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/produtos': typeof ProdutosRoute
   '/p/$token': typeof PTokenRoute
   '/propostas/nova': typeof PropostasNovaRoute
   '/propostas/': typeof PropostasIndexRoute
@@ -65,6 +79,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/produtos': typeof ProdutosRoute
   '/p/$token': typeof PTokenRoute
   '/propostas/nova': typeof PropostasNovaRoute
   '/propostas': typeof PropostasIndexRoute
@@ -75,6 +91,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/produtos': typeof ProdutosRoute
   '/p/$token': typeof PTokenRoute
   '/propostas/nova': typeof PropostasNovaRoute
   '/propostas/': typeof PropostasIndexRoute
@@ -86,6 +104,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/configuracoes'
+    | '/produtos'
     | '/p/$token'
     | '/propostas/nova'
     | '/propostas/'
@@ -95,6 +115,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/configuracoes'
+    | '/produtos'
     | '/p/$token'
     | '/propostas/nova'
     | '/propostas'
@@ -104,6 +126,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/configuracoes'
+    | '/produtos'
     | '/p/$token'
     | '/propostas/nova'
     | '/propostas/'
@@ -114,6 +138,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  ProdutosRoute: typeof ProdutosRoute
   PTokenRoute: typeof PTokenRoute
   PropostasNovaRoute: typeof PropostasNovaRoute
   PropostasIndexRoute: typeof PropostasIndexRoute
@@ -135,6 +161,20 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produtos': {
+      id: '/produtos'
+      path: '/produtos'
+      fullPath: '/produtos'
+      preLoaderRoute: typeof ProdutosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$token': {
@@ -178,6 +218,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
+  ProdutosRoute: ProdutosRoute,
   PTokenRoute: PTokenRoute,
   PropostasNovaRoute: PropostasNovaRoute,
   PropostasIndexRoute: PropostasIndexRoute,
