@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PropostasIndexRouteImport } from './routes/propostas.index'
 import { Route as PropostasNovaRouteImport } from './routes/propostas.nova'
+import { Route as PropostasIdApresentarRouteImport } from './routes/propostas.$id.apresentar'
+import { Route as PropostasIdEditarRouteImport } from './routes/propostas.$id.editar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +36,32 @@ const PropostasNovaRoute = PropostasNovaRouteImport.update({
   path: '/propostas/nova',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PropostasIdApresentarRoute = PropostasIdApresentarRouteImport.update({
+  id: '/propostas/$id/apresentar',
+  path: '/propostas/$id/apresentar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropostasIdEditarRoute = PropostasIdEditarRouteImport.update({
+  id: '/propostas/$id/editar',
+  path: '/propostas/$id/editar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/propostas/nova': typeof PropostasNovaRoute
   '/propostas/': typeof PropostasIndexRoute
+  '/propostas/$id/apresentar': typeof PropostasIdApresentarRoute
+  '/propostas/$id/editar': typeof PropostasIdEditarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/propostas/nova': typeof PropostasNovaRoute
   '/propostas': typeof PropostasIndexRoute
+  '/propostas/$id/apresentar': typeof PropostasIdApresentarRoute
+  '/propostas/$id/editar': typeof PropostasIdEditarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +69,34 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/propostas/nova': typeof PropostasNovaRoute
   '/propostas/': typeof PropostasIndexRoute
+  '/propostas/$id/apresentar': typeof PropostasIdApresentarRoute
+  '/propostas/$id/editar': typeof PropostasIdEditarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/propostas/nova' | '/propostas/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/propostas/nova'
+    | '/propostas/'
+    | '/propostas/$id/apresentar'
+    | '/propostas/$id/editar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/propostas/nova' | '/propostas'
-  id: '__root__' | '/' | '/auth' | '/propostas/nova' | '/propostas/'
+  to:
+    | '/'
+    | '/auth'
+    | '/propostas/nova'
+    | '/propostas'
+    | '/propostas/$id/apresentar'
+    | '/propostas/$id/editar'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/propostas/nova'
+    | '/propostas/'
+    | '/propostas/$id/apresentar'
+    | '/propostas/$id/editar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +104,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   PropostasNovaRoute: typeof PropostasNovaRoute
   PropostasIndexRoute: typeof PropostasIndexRoute
+  PropostasIdApresentarRoute: typeof PropostasIdApresentarRoute
+  PropostasIdEditarRoute: typeof PropostasIdEditarRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +138,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropostasNovaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/propostas/$id/apresentar': {
+      id: '/propostas/$id/apresentar'
+      path: '/propostas/$id/apresentar'
+      fullPath: '/propostas/$id/apresentar'
+      preLoaderRoute: typeof PropostasIdApresentarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/propostas/$id/editar': {
+      id: '/propostas/$id/editar'
+      path: '/propostas/$id/editar'
+      fullPath: '/propostas/$id/editar'
+      preLoaderRoute: typeof PropostasIdEditarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +160,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   PropostasNovaRoute: PropostasNovaRoute,
   PropostasIndexRoute: PropostasIndexRoute,
+  PropostasIdApresentarRoute: PropostasIdApresentarRoute,
+  PropostasIdEditarRoute: PropostasIdEditarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
