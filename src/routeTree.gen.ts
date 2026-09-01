@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as PropostasIndexRouteImport } from './routes/propostas.index'
+import { Route as PropostasNovaRouteImport } from './routes/propostas.nova'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,34 +29,43 @@ const PropostasIndexRoute = PropostasIndexRouteImport.update({
   path: '/propostas/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PropostasNovaRoute = PropostasNovaRouteImport.update({
+  id: '/propostas/nova',
+  path: '/propostas/nova',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/propostas/nova': typeof PropostasNovaRoute
   '/propostas/': typeof PropostasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/propostas/nova': typeof PropostasNovaRoute
   '/propostas': typeof PropostasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/propostas/nova': typeof PropostasNovaRoute
   '/propostas/': typeof PropostasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/propostas/'
+  fullPaths: '/' | '/auth' | '/propostas/nova' | '/propostas/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/propostas'
-  id: '__root__' | '/' | '/auth' | '/propostas/'
+  to: '/' | '/auth' | '/propostas/nova' | '/propostas'
+  id: '__root__' | '/' | '/auth' | '/propostas/nova' | '/propostas/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  PropostasNovaRoute: typeof PropostasNovaRoute
   PropostasIndexRoute: typeof PropostasIndexRoute
 }
 
@@ -82,12 +92,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropostasIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/propostas/nova': {
+      id: '/propostas/nova'
+      path: '/propostas/nova'
+      fullPath: '/propostas/nova'
+      preLoaderRoute: typeof PropostasNovaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  PropostasNovaRoute: PropostasNovaRoute,
   PropostasIndexRoute: PropostasIndexRoute,
 }
 export const routeTree = rootRouteImport
