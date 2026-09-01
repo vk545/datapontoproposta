@@ -138,22 +138,18 @@ function Products() {
                     }
                   />
                 </div>
-                <div>
-                  <Label className="text-xs uppercase tracking-widest text-muted-foreground">
-                    Imagem principal (URL)
-                  </Label>
-                  <Input
-                    className="mt-1.5"
-                    value={v.main_image_url ?? ""}
-                    placeholder="https://…"
-                    onChange={(e) =>
-                      setEdits({
-                        ...edits,
-                        [p.id]: { ...edits[p.id], main_image_url: e.target.value },
-                      })
-                    }
-                  />
-                </div>
+                <ImageField
+                  label="Imagem do produto"
+                  value={v.main_image_url ?? null}
+                  hint="Aparece na proposta enviada ao cliente."
+                  onChange={(next) =>
+                    setEdits({
+                      ...edits,
+                      [p.id]: { ...edits[p.id], main_image_url: next },
+                    })
+                  }
+                />
+
               </div>
 
               <div className="mt-5 flex flex-wrap gap-1.5">
