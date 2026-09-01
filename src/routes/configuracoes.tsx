@@ -106,6 +106,13 @@ function SettingsPage() {
           </h2>
           {settings ? (
             <div className="mt-5 space-y-4">
+              <ImageField
+                label="Logo da empresa"
+                value={settings.logo_url}
+                hint="Aparece no topo da proposta e na página pública enviada ao cliente."
+                maxSize={600}
+                onChange={(next) => setSettings({ ...settings, logo_url: next })}
+              />
               {(
                 [
                   ["company_name", "Nome"],
@@ -114,7 +121,6 @@ function SettingsPage() {
                   ["email", "E-mail"],
                   ["site", "Site"],
                   ["address", "Endereço"],
-                  ["logo_url", "Logo (URL)"],
                 ] as const
               ).map(([k, l]) => (
                 <div key={k}>
@@ -128,6 +134,7 @@ function SettingsPage() {
                   />
                 </div>
               ))}
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground">
