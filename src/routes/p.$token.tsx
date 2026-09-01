@@ -14,8 +14,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { BrandLogo } from "@/lib/brand";
 import { dateBR } from "@/lib/dataponto";
 import { isExpired, type Proposal } from "@/lib/proposal";
 
