@@ -169,9 +169,81 @@
   color: var(--color-institutional-foreground);
 }
 
+/* Malha tecnológica sutil sobre fundos escuros */
+@utility tech-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklch, var(--color-brand) 16%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--color-brand) 16%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, black 0%, transparent 75%);
+}
+
+@utility glass-card {
+  background: color-mix(in oklch, var(--color-card) 72%, transparent);
+  backdrop-filter: blur(14px);
+  border: 1px solid color-mix(in oklch, var(--color-brand) 22%, var(--color-border));
+  box-shadow:
+    0 1px 0 color-mix(in oklch, white 40%, transparent) inset,
+    0 18px 45px -25px color-mix(in oklch, var(--color-institutional) 60%, transparent);
+}
+
+@utility glass-dark {
+  background: color-mix(in oklch, white 6%, transparent);
+  backdrop-filter: blur(14px);
+  border: 1px solid color-mix(in oklch, var(--color-brand) 28%, transparent);
+}
+
+@utility glow-brand {
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--color-brand) 35%, transparent),
+    0 0 42px -8px color-mix(in oklch, var(--color-brand) 55%, transparent);
+}
+
+@utility text-gradient-brand {
+  background: linear-gradient(
+    100deg,
+    var(--color-institutional-foreground) 0%,
+    color-mix(in oklch, var(--color-brand) 85%, white) 60%,
+    var(--color-institutional-foreground) 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 7s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@utility pulse-ring {
+  animation: pulse-ring 2.8s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.92);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 @utility text-balance-tight {
   text-wrap: balance;
 }
+
 
 @utility fade-up {
   animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
