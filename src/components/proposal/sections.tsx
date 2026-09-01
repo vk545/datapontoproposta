@@ -20,7 +20,9 @@ import {
   Wifi,
   Wrench,
 } from "lucide-react";
-import relogioImg from "@/assets/relogio-facial.png";
+import relogioImg from "@/assets/relogio-tech.png";
+import techBg from "@/assets/tech-bg.jpg";
+import { BrandLogo, ProductImage } from "@/lib/brand";
 import {
   EQUIPMENT_FEATURES,
   IMPLEMENTATION_STEPS,
@@ -53,15 +55,21 @@ function Section({
         ? "bg-surface text-foreground"
         : "bg-card text-foreground";
   return (
-    <section className={`w-full ${toneClass} ${className}`}>
-      <div className="mx-auto w-full max-w-5xl px-6 py-16 sm:py-24">{children}</div>
+    <section className={`relative w-full overflow-hidden ${toneClass} ${className}`}>
+      {tone === "institutional" ? (
+        <div aria-hidden className="tech-grid pointer-events-none absolute inset-0 opacity-60" />
+      ) : null}
+      <div className="relative mx-auto w-full max-w-5xl px-6 py-16 sm:py-24">{children}</div>
     </section>
   );
 }
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-brand">{children}</p>
+    <p className="mb-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-brand">
+      <span className="inline-block h-1.5 w-1.5 rounded-full bg-brand shadow-[0_0_10px_var(--color-brand)]" />
+      {children}
+    </p>
   );
 }
 
@@ -83,51 +91,69 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
     key: "capa",
     node: (
       <Section tone="institutional" className="relative overflow-hidden">
-        <div className="grid items-center gap-12 md:grid-cols-[1.1fr_0.9fr]">
+        <img
+          src={techBg}
+          alt=""
+          aria-hidden
+          width={1920}
+          height={1088}
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-screen"
+        />
+        <div className="relative grid items-center gap-12 md:grid-cols-[1.1fr_0.9fr]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-brand">
+            <BrandLogo className="mb-8 brightness-0 invert" />
+            <p className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.28em] text-brand">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="pulse-ring absolute inline-flex h-full w-full rounded-full bg-brand" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-brand" />
+              </span>
               Proposta personalizada
             </p>
-            <p className="mt-6 text-sm uppercase tracking-[0.18em] text-institutional-foreground/70">
+            <p className="mt-7 text-sm uppercase tracking-[0.18em] text-institutional-foreground/60">
               Preparada para
             </p>
             <h2 className="mt-1 text-2xl font-semibold">{p.company_name || "—"}</h2>
-            <h1 className="mt-8 text-4xl font-semibold leading-[1.08] text-balance-tight sm:text-5xl">
+            <h1 className="text-gradient-brand mt-7 text-4xl font-semibold leading-[1.08] text-balance-tight sm:text-5xl">
               {texts.cover_title || "Controle de ponto pensado para a sua operação."}
             </h1>
             <p className="mt-5 max-w-lg text-lg text-institutional-foreground/80">
               {texts.cover_subtitle || n.subtitle}
             </p>
-            <div className="mt-10 flex flex-wrap gap-x-10 gap-y-4 text-sm text-institutional-foreground/70">
-              <div>
-                <span className="block text-xs uppercase tracking-widest">Data</span>
-                <span className="text-institutional-foreground">{dateBR(p.created_at)}</span>
-              </div>
-              <div>
-                <span className="block text-xs uppercase tracking-widest">Consultor</span>
-                <span className="text-institutional-foreground">{p.seller_name || "—"}</span>
-              </div>
-              {p.valid_until ? (
-                <div>
-                  <span className="block text-xs uppercase tracking-widest">Válida até</span>
-                  <span className="text-institutional-foreground">{dateBR(p.valid_until)}</span>
+            <div className="mt-10 grid max-w-lg grid-cols-2 gap-3 sm:grid-cols-3">
+              {[
+                ["Data", dateBR(p.created_at)],
+                ["Consultor", p.seller_name || "—"],
+                ...(p.valid_until
+                  ? ([["Válida até", dateBR(p.valid_until)]] as [string, string][])
+                  : []),
+              ].map(([label, value]) => (
+                <div key={label} className="glass-dark rounded-xl px-4 py-3">
+                  <span className="block text-[10px] uppercase tracking-widest text-institutional-foreground/60">
+                    {label}
+                  </span>
+                  <span className="text-sm text-institutional-foreground">{value}</span>
                 </div>
-              ) : null}
+              ))}
             </div>
           </div>
           <div className="relative">
-            <div className="absolute inset-0 -z-10 rounded-full bg-brand/20 blur-3xl" />
-            <img
-              src={relogioImg}
+            <div className="absolute inset-6 -z-10 rounded-full bg-brand/25 blur-3xl" />
+            <div
+              aria-hidden
+              className="pulse-ring absolute left-1/2 top-1/2 -z-10 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand/40"
+            />
+            <ProductImage
+              code="relogio_facial"
+              fallback={relogioImg}
               alt="Relógio de ponto facial Dataponto"
-              width={1024}
-              height={1024}
+              eager
               className="mx-auto w-full max-w-sm drop-shadow-2xl"
             />
           </div>
         </div>
       </Section>
     ),
+
   });
 
   items.push({
@@ -227,15 +253,14 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div className="relative">
             <div className="absolute inset-0 -z-10 rounded-full bg-brand/15 blur-3xl" />
-            <img
-              src={relogioImg}
+            <ProductImage
+              code="relogio_facial"
+              fallback={relogioImg}
               alt="Relógio de ponto facial"
-              loading="lazy"
-              width={1024}
-              height={1024}
               className="mx-auto w-full max-w-xs drop-shadow-2xl"
             />
           </div>
+
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand">
               Equipamento
