@@ -112,62 +112,75 @@ function PublicProposal() {
     toast.success("Proposta aprovada com sucesso.");
   }
 
+  const waLink = data.seller_phone
+    ? `https://wa.me/55${(data.seller_phone || "").replace(/\D/g, "")}?text=${encodeURIComponent(
+        `Olá! Estou vendo a proposta da ${data.company_name} e tenho algumas dúvidas.`,
+      )}`
+    : null;
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="no-print sticky top-0 z-20 border-b border-border bg-card/90 backdrop-blur">
+      <header className="no-print sticky top-0 z-20 border-b border-border bg-card/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3.5">
-          <p className="text-sm font-semibold tracking-tight">
-            data<span className="text-brand">ponto</span>
-          </p>
+          <BrandLogo />
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={() => window.print()}>
               <Download className="mr-1.5 h-4 w-4" strokeWidth={1.75} />
               PDF
             </Button>
+            {waLink ? (
+              <Button variant="outline" size="sm" asChild>
+                <a href={waLink} target="_blank" rel="noreferrer">
+                  <MessageCircle className="mr-1.5 h-4 w-4" strokeWidth={1.75} />
+                  Tenho dúvidas
+                </a>
+              </Button>
+            ) : null}
             {!expired && !approved ? (
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                  <Button size="sm">Aprovar proposta</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Aprovar proposta</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div>
-                      <Label>Nome</Label>
-                      <Input
-                        className="mt-1.5"
-                        value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <Label>Cargo</Label>
-                      <Input
-                        className="mt-1.5"
-                        value={form.role_title}
-                        onChange={(e) => setForm({ ...form, role_title: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <Label>E-mail</Label>
-                      <Input
-                        className="mt-1.5"
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button onClick={approve}>Confirmar aprovação</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <Button size="sm" onClick={() => setOpen(true)}>
+                Aprovar proposta
+              </Button>
             ) : null}
           </div>
         </div>
       </header>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Aprovar proposta</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Nome</Label>
+              <Input
+                className="mt-1.5"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Cargo</Label>
+              <Input
+                className="mt-1.5"
+                value={form.role_title}
+                onChange={(e) => setForm({ ...form, role_title: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>E-mail</Label>
+              <Input
+                className="mt-1.5"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={approve}>Confirmar aprovação</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {expired ? (
         <div className="mx-auto max-w-5xl px-6 pt-6">
@@ -190,17 +203,13 @@ function PublicProposal() {
           ) : (
             <div className="flex flex-wrap justify-center gap-3">
               <Button size="lg" onClick={() => setOpen(true)} disabled={expired}>
-                Tenho interesse
+                Aprovar proposta
               </Button>
-              {data.seller_phone ? (
+              {waLink ? (
                 <Button size="lg" variant="outline" asChild>
-                  <a
-                    href={`https://wa.me/55${(data.seller_phone || "").replace(/\D/g, "")}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a href={waLink} target="_blank" rel="noreferrer">
                     <MessageCircle className="mr-1.5 h-4 w-4" strokeWidth={1.75} />
-                    Falar com um consultor
+                    Tenho dúvidas
                   </a>
                 </Button>
               ) : null}
@@ -215,3 +224,4 @@ function PublicProposal() {
     </div>
   );
 }
+
