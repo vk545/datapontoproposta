@@ -83,7 +83,10 @@ function SettingsPage() {
       .from("company_settings")
       .update(settings as never)
       .eq("id", true);
-    if (error) return toast.error("Somente administradores podem alterar as configurações.");
+    if (error) {
+      toast.error("Somente administradores podem alterar as configurações.");
+      return;
+    }
     toast.success("Configurações salvas.");
   }
 
@@ -93,7 +96,10 @@ function SettingsPage() {
       .from("profiles")
       .update(profile as never)
       .eq("id", user.id);
-    if (error) return toast.error("Não foi possível salvar seus dados.");
+    if (error) {
+      toast.error("Não foi possível salvar seus dados.");
+      return;
+    }
     toast.success("Dados do consultor salvos.");
   }
 

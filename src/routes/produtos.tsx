@@ -70,7 +70,10 @@ function Products() {
       .from("products")
       .update(patch as never)
       .eq("id", p.id);
-    if (error) return toast.error("Somente administradores podem alterar produtos.");
+    if (error) {
+      toast.error("Somente administradores podem alterar produtos.");
+      return;
+    }
     toast.success("Produto atualizado.");
     setEdits({ ...edits, [p.id]: {} });
     qc.invalidateQueries({ queryKey: ["products"] });

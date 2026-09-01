@@ -97,12 +97,18 @@ function PublicProposal() {
   const expired = isExpired(data) || data.status === "expirada";
 
   async function approve() {
-    if (!form.name.trim() || !data) return toast.error("Informe seu nome.");
+    if (!form.name.trim() || !data) {
+      toast.error("Informe seu nome.");
+      return;
+    }
     const now = new Date().toISOString();
     const { error } = await supabase
       .from("proposal_approvals")
       .insert({ proposal_id: data.id, ...form } as never);
-    if (error) return toast.error("Não foi possível registrar a aprovação.");
+    if (error) {
+      toast.error("Não foi possível registrar a aprovação.");
+      return;
+    }
     await supabase
       .from("proposals")
       .update({ status: "aprovada", approved_at: now } as never)

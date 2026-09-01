@@ -145,7 +145,10 @@ function NewProposal() {
       .select("id")
       .single();
     setSaving(false);
-    if (error) return toast.error("Não foi possível criar a proposta.");
+    if (error) {
+      toast.error("Não foi possível criar a proposta.");
+      return;
+    }
     toast.success("Proposta criada.");
     navigate({ to: "/propostas/$id/editar", params: { id: (data as { id: string }).id } });
   }

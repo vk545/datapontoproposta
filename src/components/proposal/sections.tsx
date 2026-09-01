@@ -114,10 +114,10 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
             </p>
             <h2 className="mt-1 text-2xl font-semibold">{p.company_name || "—"}</h2>
             <h1 className="text-gradient-brand mt-7 text-4xl font-semibold leading-[1.08] text-balance-tight sm:text-5xl">
-              {texts.cover_title || "Controle de ponto pensado para a sua operação."}
+              {texts['cover_title'] || "Controle de ponto pensado para a sua operação."}
             </h1>
             <p className="mt-5 max-w-lg text-lg text-institutional-foreground/80">
-              {texts.cover_subtitle || n.subtitle}
+              {texts['cover_subtitle'] || n.subtitle}
             </p>
             <div className="mt-10 grid max-w-lg grid-cols-2 gap-3 sm:grid-cols-3">
               {[

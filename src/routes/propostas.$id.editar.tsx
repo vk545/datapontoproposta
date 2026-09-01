@@ -96,7 +96,10 @@ function Editor() {
       .update(payload as never)
       .eq("id", draft.id);
     setSaving(false);
-    if (error) return toast.error("Não foi possível salvar.");
+    if (error) {
+      toast.error("Não foi possível salvar.");
+      return;
+    }
     setDraft(payload as Proposal);
     toast.success("Proposta salva.");
   }
