@@ -200,7 +200,7 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
           ].map((s, idx) => (
             <div
               key={s.t}
-              className="rounded-xl border border-border bg-card p-6 shadow-soft"
+              className="glass-card rounded-2xl p-6"
               style={{ animationDelay: `${idx * 60}ms` }}
             >
               <s.i className="h-5 w-5 text-brand" strokeWidth={1.75} />
@@ -235,7 +235,7 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
           {n.highlights.map((h) => (
             <div
               key={h}
-              className="flex items-start gap-3 rounded-xl border border-border bg-card p-5 shadow-soft"
+              className="flex items-start gap-3 glass-card rounded-2xl p-5"
             >
               <Check className="mt-0.5 h-5 w-5 shrink-0 text-brand" strokeWidth={2} />
               <p className="text-base leading-relaxed">{h}</p>
@@ -304,7 +304,7 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
             { t: "Gestão", i: Gauge },
           ].map((s, i) => (
             <div key={s.t} className="flex items-center gap-3">
-              <div className="flex flex-1 items-center gap-3 rounded-xl border border-border bg-card px-5 py-4 shadow-soft">
+              <div className="flex flex-1 items-center gap-3 glass-card rounded-2xl px-5 py-4">
                 <s.i className="h-5 w-5 text-brand" strokeWidth={1.75} />
                 <span className="text-sm font-semibold">{s.t}</span>
               </div>
@@ -537,7 +537,7 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
             { t: "Implementação", d: "Configuração, integração e treinamento", i: Wrench },
             { t: "Proteção", d: "Primme, suporte e manutenção", i: ShieldCheck },
           ].map((c) => (
-            <div key={c.t} className="rounded-xl border border-border bg-card p-6 shadow-soft">
+            <div key={c.t} className="glass-card rounded-2xl p-6">
               <c.i className="h-5 w-5 text-brand" strokeWidth={1.75} />
               <p className="mt-4 text-sm font-semibold uppercase tracking-widest text-institutional">
                 {c.t}
@@ -621,7 +621,7 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
           <p className="mt-4 text-lg text-muted-foreground">
             Uma solução pensada para tornar sua operação mais segura, ágil e simples de administrar.
           </p>
-          <div className="mt-10 rounded-xl border border-border bg-card p-7 text-left shadow-soft">
+          <div className="mt-10 glass-card rounded-2xl p-7 text-left">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Seu consultor
             </p>
@@ -693,7 +693,7 @@ export function CalculatorSection({
             </div>
           ))}
         </div>
-        <div className="rounded-xl border border-border bg-card p-7 shadow-soft">
+        <div className="glass-card rounded-2xl p-7">
           <p className="text-xs uppercase tracking-widest text-muted-foreground">
             Tempo potencialmente acumulado
           </p>
