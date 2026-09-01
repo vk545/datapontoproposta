@@ -287,6 +287,8 @@ export type Database = {
           prices: Json
           problem_text: string | null
           public_token: string
+          rejected_at: string | null
+          rejection_reason: string | null
           sections: Json
           seller_email: string | null
           seller_name: string | null
@@ -329,6 +331,8 @@ export type Database = {
           prices?: Json
           problem_text?: string | null
           public_token?: string
+          rejected_at?: string | null
+          rejection_reason?: string | null
           sections?: Json
           seller_email?: string | null
           seller_name?: string | null
@@ -371,6 +375,8 @@ export type Database = {
           prices?: Json
           problem_text?: string | null
           public_token?: string
+          rejected_at?: string | null
+          rejection_reason?: string | null
           sections?: Json
           seller_email?: string | null
           seller_name?: string | null
