@@ -10,33 +10,141 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as PTokenRouteImport } from './routes/p.$token'
+import { Route as PropostasIndexRouteImport } from './routes/propostas.index'
+import { Route as PropostasNovaRouteImport } from './routes/propostas.nova'
+import { Route as PropostasIdApresentarRouteImport } from './routes/propostas.$id.apresentar'
+import { Route as PropostasIdEditarRouteImport } from './routes/propostas.$id.editar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutosRoute = ProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PTokenRoute = PTokenRouteImport.update({
+  id: '/p/$token',
+  path: '/p/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropostasIndexRoute = PropostasIndexRouteImport.update({
+  id: '/propostas/',
+  path: '/propostas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropostasNovaRoute = PropostasNovaRouteImport.update({
+  id: '/propostas/nova',
+  path: '/propostas/nova',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropostasIdApresentarRoute = PropostasIdApresentarRouteImport.update({
+  id: '/propostas/$id/apresentar',
+  path: '/propostas/$id/apresentar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PropostasIdEditarRoute = PropostasIdEditarRouteImport.update({
+  id: '/propostas/$id/editar',
+  path: '/propostas/$id/editar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/produtos': typeof ProdutosRoute
+  '/p/$token': typeof PTokenRoute
+  '/propostas/nova': typeof PropostasNovaRoute
+  '/propostas/': typeof PropostasIndexRoute
+  '/propostas/$id/apresentar': typeof PropostasIdApresentarRoute
+  '/propostas/$id/editar': typeof PropostasIdEditarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/produtos': typeof ProdutosRoute
+  '/p/$token': typeof PTokenRoute
+  '/propostas/nova': typeof PropostasNovaRoute
+  '/propostas': typeof PropostasIndexRoute
+  '/propostas/$id/apresentar': typeof PropostasIdApresentarRoute
+  '/propostas/$id/editar': typeof PropostasIdEditarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/produtos': typeof ProdutosRoute
+  '/p/$token': typeof PTokenRoute
+  '/propostas/nova': typeof PropostasNovaRoute
+  '/propostas/': typeof PropostasIndexRoute
+  '/propostas/$id/apresentar': typeof PropostasIdApresentarRoute
+  '/propostas/$id/editar': typeof PropostasIdEditarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/configuracoes'
+    | '/produtos'
+    | '/p/$token'
+    | '/propostas/nova'
+    | '/propostas/'
+    | '/propostas/$id/apresentar'
+    | '/propostas/$id/editar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/configuracoes'
+    | '/produtos'
+    | '/p/$token'
+    | '/propostas/nova'
+    | '/propostas'
+    | '/propostas/$id/apresentar'
+    | '/propostas/$id/editar'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/configuracoes'
+    | '/produtos'
+    | '/p/$token'
+    | '/propostas/nova'
+    | '/propostas/'
+    | '/propostas/$id/apresentar'
+    | '/propostas/$id/editar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  ProdutosRoute: typeof ProdutosRoute
+  PTokenRoute: typeof PTokenRoute
+  PropostasNovaRoute: typeof PropostasNovaRoute
+  PropostasIndexRoute: typeof PropostasIndexRoute
+  PropostasIdApresentarRoute: typeof PropostasIdApresentarRoute
+  PropostasIdEditarRoute: typeof PropostasIdEditarRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +156,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produtos': {
+      id: '/produtos'
+      path: '/produtos'
+      fullPath: '/produtos'
+      preLoaderRoute: typeof ProdutosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/p/$token': {
+      id: '/p/$token'
+      path: '/p/$token'
+      fullPath: '/p/$token'
+      preLoaderRoute: typeof PTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/propostas/': {
+      id: '/propostas/'
+      path: '/propostas'
+      fullPath: '/propostas/'
+      preLoaderRoute: typeof PropostasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/propostas/nova': {
+      id: '/propostas/nova'
+      path: '/propostas/nova'
+      fullPath: '/propostas/nova'
+      preLoaderRoute: typeof PropostasNovaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/propostas/$id/apresentar': {
+      id: '/propostas/$id/apresentar'
+      path: '/propostas/$id/apresentar'
+      fullPath: '/propostas/$id/apresentar'
+      preLoaderRoute: typeof PropostasIdApresentarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/propostas/$id/editar': {
+      id: '/propostas/$id/editar'
+      path: '/propostas/$id/editar'
+      fullPath: '/propostas/$id/editar'
+      preLoaderRoute: typeof PropostasIdEditarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
+  ProdutosRoute: ProdutosRoute,
+  PTokenRoute: PTokenRoute,
+  PropostasNovaRoute: PropostasNovaRoute,
+  PropostasIndexRoute: PropostasIndexRoute,
+  PropostasIdApresentarRoute: PropostasIdApresentarRoute,
+  PropostasIdEditarRoute: PropostasIdEditarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
