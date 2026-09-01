@@ -13,7 +13,7 @@ export function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className={`inline-flex shrink-0 items-center rounded-full border px-3 py-1 text-xs font-medium ${
-        TONE[status] ?? TONE.rascunho
+        TONE[status] ?? TONE['rascunho']
       }`}
     >
       {STATUS_LABEL[status as Status] ?? status}

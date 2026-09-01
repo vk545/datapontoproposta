@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { FileText, LayoutDashboard, LogOut, Package, Settings } from "lucide-react";
+import { FileText, LayoutDashboard, LogOut, Package, Settings, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,10 @@ const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/propostas", label: "Propostas", icon: FileText },
   { to: "/produtos", label: "Produtos", icon: Package },
+  { to: "/usuarios", label: "Consultores", icon: Users },
   { to: "/configuracoes", label: "Configurações", icon: Settings },
 ] as const;
+
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();

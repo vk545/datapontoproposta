@@ -84,14 +84,20 @@ function ProposalsList() {
       } as never)
       .select("id")
       .single();
-    if (error) return toast.error("Não foi possível duplicar.");
+    if (error) {
+      toast.error("Não foi possível duplicar.");
+      return;
+    }
     qc.invalidateQueries({ queryKey: ["proposals"] });
     navigate({ to: "/propostas/$id/editar", params: { id: (data as { id: string }).id } });
   }
 
   async function remove(p: Proposal) {
     const { error } = await supabase.from("proposals").delete().eq("id", p.id);
-    if (error) return toast.error("Não foi possível excluir.");
+    if (error) {
+      toast.error("Não foi possível excluir.");
+      return;
+    }
     toast.success("Proposta excluída.");
     qc.invalidateQueries({ queryKey: ["proposals"] });
   }

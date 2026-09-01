@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { AppShell, PageHeader } from "@/components/AppShell";
+import { ImageField } from "@/components/ImageField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -82,7 +83,10 @@ function SettingsPage() {
       .from("company_settings")
       .update(settings as never)
       .eq("id", true);
-    if (error) return toast.error("Somente administradores podem alterar as configurações.");
+    if (error) {
+      toast.error("Somente administradores podem alterar as configurações.");
+      return;
+    }
     toast.success("Configurações salvas.");
   }
 
@@ -92,7 +96,10 @@ function SettingsPage() {
       .from("profiles")
       .update(profile as never)
       .eq("id", user.id);
-    if (error) return toast.error("Não foi possível salvar seus dados.");
+    if (error) {
+      toast.error("Não foi possível salvar seus dados.");
+      return;
+    }
     toast.success("Dados do consultor salvos.");
   }
 
@@ -106,6 +113,13 @@ function SettingsPage() {
           </h2>
           {settings ? (
             <div className="mt-5 space-y-4">
+              <ImageField
+                label="Logo da empresa"
+                value={settings.logo_url}
+                hint="Aparece no topo da proposta e na página pública enviada ao cliente."
+                maxSize={600}
+                onChange={(next) => setSettings({ ...settings, logo_url: next })}
+              />
               {(
                 [
                   ["company_name", "Nome"],
@@ -114,7 +128,6 @@ function SettingsPage() {
                   ["email", "E-mail"],
                   ["site", "Site"],
                   ["address", "Endereço"],
-                  ["logo_url", "Logo (URL)"],
                 ] as const
               ).map(([k, l]) => (
                 <div key={k}>
@@ -128,6 +141,7 @@ function SettingsPage() {
                   />
                 </div>
               ))}
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground">

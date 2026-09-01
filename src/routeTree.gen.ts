@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as UsuariosRouteImport } from './routes/usuarios'
 import { Route as PTokenRouteImport } from './routes/p.$token'
 import { Route as PropostasIndexRouteImport } from './routes/propostas.index'
 import { Route as PropostasNovaRouteImport } from './routes/propostas.nova'
@@ -37,6 +38,11 @@ const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
 const ProdutosRoute = ProdutosRouteImport.update({
   id: '/produtos',
   path: '/produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsuariosRoute = UsuariosRouteImport.update({
+  id: '/usuarios',
+  path: '/usuarios',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PTokenRoute = PTokenRouteImport.update({
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/produtos': typeof ProdutosRoute
+  '/usuarios': typeof UsuariosRoute
   '/p/$token': typeof PTokenRoute
   '/propostas/nova': typeof PropostasNovaRoute
   '/propostas/': typeof PropostasIndexRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/produtos': typeof ProdutosRoute
+  '/usuarios': typeof UsuariosRoute
   '/p/$token': typeof PTokenRoute
   '/propostas/nova': typeof PropostasNovaRoute
   '/propostas': typeof PropostasIndexRoute
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/configuracoes': typeof ConfiguracoesRoute
   '/produtos': typeof ProdutosRoute
+  '/usuarios': typeof UsuariosRoute
   '/p/$token': typeof PTokenRoute
   '/propostas/nova': typeof PropostasNovaRoute
   '/propostas/': typeof PropostasIndexRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/configuracoes'
     | '/produtos'
+    | '/usuarios'
     | '/p/$token'
     | '/propostas/nova'
     | '/propostas/'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/configuracoes'
     | '/produtos'
+    | '/usuarios'
     | '/p/$token'
     | '/propostas/nova'
     | '/propostas'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/configuracoes'
     | '/produtos'
+    | '/usuarios'
     | '/p/$token'
     | '/propostas/nova'
     | '/propostas/'
@@ -140,6 +152,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
   ProdutosRoute: typeof ProdutosRoute
+  UsuariosRoute: typeof UsuariosRoute
   PTokenRoute: typeof PTokenRoute
   PropostasNovaRoute: typeof PropostasNovaRoute
   PropostasIndexRoute: typeof PropostasIndexRoute
@@ -175,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/produtos'
       fullPath: '/produtos'
       preLoaderRoute: typeof ProdutosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/usuarios': {
+      id: '/usuarios'
+      path: '/usuarios'
+      fullPath: '/usuarios'
+      preLoaderRoute: typeof UsuariosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/p/$token': {
@@ -220,6 +240,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
   ProdutosRoute: ProdutosRoute,
+  UsuariosRoute: UsuariosRoute,
   PTokenRoute: PTokenRoute,
   PropostasNovaRoute: PropostasNovaRoute,
   PropostasIndexRoute: PropostasIndexRoute,

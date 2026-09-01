@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, PageHeader } from "@/components/AppShell";
+import { ImageField } from "@/components/ImageField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -69,7 +70,10 @@ function Products() {
       .from("products")
       .update(patch as never)
       .eq("id", p.id);
-    if (error) return toast.error("Somente administradores podem alterar produtos.");
+    if (error) {
+      toast.error("Somente administradores podem alterar produtos.");
+      return;
+    }
     toast.success("Produto atualizado.");
     setEdits({ ...edits, [p.id]: {} });
     qc.invalidateQueries({ queryKey: ["products"] });
@@ -138,22 +142,18 @@ function Products() {
                     }
                   />
                 </div>
-                <div>
-                  <Label className="text-xs uppercase tracking-widest text-muted-foreground">
-                    Imagem principal (URL)
-                  </Label>
-                  <Input
-                    className="mt-1.5"
-                    value={v.main_image_url ?? ""}
-                    placeholder="https://…"
-                    onChange={(e) =>
-                      setEdits({
-                        ...edits,
-                        [p.id]: { ...edits[p.id], main_image_url: e.target.value },
-                      })
-                    }
-                  />
-                </div>
+                <ImageField
+                  label="Imagem do produto"
+                  value={v.main_image_url ?? null}
+                  hint="Aparece na proposta enviada ao cliente."
+                  onChange={(next) =>
+                    setEdits({
+                      ...edits,
+                      [p.id]: { ...edits[p.id], main_image_url: next },
+                    })
+                  }
+                />
+
               </div>
 
               <div className="mt-5 flex flex-wrap gap-1.5">

@@ -29,7 +29,7 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -150,13 +150,9 @@ function AuthPage() {
           <Button variant="outline" className="mt-3 w-full" onClick={google}>
             Continuar com o Google
           </Button>
-          <button
-            type="button"
-            className="mt-6 w-full text-sm text-muted-foreground underline-offset-4 hover:underline"
-            onClick={() => setMode(mode === "login" ? "signup" : "login")}
-          >
-            {mode === "login" ? "Não tem acesso? Criar conta" : "Já tenho acesso"}
-          </button>
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            Os acessos são criados pelo administrador da Dataponto em Consultores.
+          </p>
         </div>
       </div>
     </div>

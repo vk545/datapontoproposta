@@ -96,7 +96,10 @@ function Editor() {
       .update(payload as never)
       .eq("id", draft.id);
     setSaving(false);
-    if (error) return toast.error("Não foi possível salvar.");
+    if (error) {
+      toast.error("Não foi possível salvar.");
+      return;
+    }
     setDraft(payload as Proposal);
     toast.success("Proposta salva.");
   }
@@ -378,7 +381,7 @@ function Editor() {
               <div className="mt-3 grid gap-4">
                 <F label="Título da capa">
                   <Input
-                    value={draft.texts?.cover_title ?? ""}
+                    value={draft.texts?.['cover_title'] ?? ""}
                     placeholder="Controle de ponto pensado para a sua operação."
                     onChange={(e) =>
                       set({ texts: { ...(draft.texts ?? {}), cover_title: e.target.value } })
@@ -387,7 +390,7 @@ function Editor() {
                 </F>
                 <F label="Subtítulo da capa">
                   <Input
-                    value={draft.texts?.cover_subtitle ?? ""}
+                    value={draft.texts?.['cover_subtitle'] ?? ""}
                     placeholder={narrativeOf(draft).subtitle}
                     onChange={(e) =>
                       set({ texts: { ...(draft.texts ?? {}), cover_subtitle: e.target.value } })
