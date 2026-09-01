@@ -31,7 +31,7 @@ export const Route = createFileRoute("/produtos")({
       {
         name: "description",
         content:
-          "Biblioteca de produtos Dataponto: relógio facial, Primme e sistemas Secullum, com preços editáveis.",
+          "Biblioteca de produtos Dataponto: relógio facial, Comodato e sistemas Secullum, com preços editáveis.",
       },
       { property: "og:title", content: "Produtos — Dataponto Propostas" },
       {

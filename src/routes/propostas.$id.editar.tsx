@@ -281,7 +281,7 @@ function Editor() {
                     value={draft.modality}
                     onChange={(e) => set({ modality: e.target.value as "primme" | "compra" })}
                   >
-                    <option value="primme">Primme</option>
+                    <option value="primme">Comodato</option>
                     <option value="compra">Compra</option>
                   </select>
                 </F>
@@ -320,7 +320,7 @@ function Editor() {
                 {(
                   [
                     ["equipment", "Equipamento"],
-                    ["primme", "Primme/mês"],
+                    ["primme", "Comodato/mês"],
                     ["pro", "Pro/mês"],
                     ["ultimate", "Ultimate/mês"],
                   ] as const
@@ -412,7 +412,7 @@ function Editor() {
                   ["Cenário relatado", draft.problem_text || "—"],
                   ["Impacto", "Tempo, retrabalho e custo operacional acumulados"],
                   ["Solução", `Relógio de ponto facial · ${draft.device_qty} equipamento(s)`],
-                  ["Proteção", draft.modality === "primme" ? "Primme" : "Compra"],
+                  ["Proteção", draft.modality === "primme" ? "Comodato" : "Compra"],
                   [
                     "Gestão",
                     draft.system_plan === "nenhum"

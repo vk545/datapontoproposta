@@ -168,7 +168,7 @@ function ProposalsList() {
                   <td className="px-4 py-4 text-muted-foreground">{p.seller_name || "—"}</td>
                   <td className="px-4 py-4 text-muted-foreground">{dateBR(p.created_at)}</td>
                   <td className="px-4 py-4 text-muted-foreground">
-                    {p.modality === "primme" ? "Primme" : "Compra"} ·{" "}
+                    {p.modality === "primme" ? "Comodato" : "Compra"} ·{" "}
                     {p.system_plan === "nenhum"
                       ? "sem sistema"
                       : p.system_plan === "pro"

@@ -273,7 +273,7 @@ function NewProposal() {
                     Solução recomendada
                   </p>
                   <p className="mt-2 text-sm">
-                    Relógio facial · {narrative.recommend.modality === "primme" ? "Primme" : "Compra"}{" "}
+                    Relógio facial · {narrative.recommend.modality === "primme" ? "Comodato" : "Compra"}{" "}
                     · Secullum RH {narrative.recommend.plan === "pro" ? "Pro" : "Ultimate"}
                   </p>
                   <Button size="sm" variant="outline" className="mt-3" onClick={applyRecommendation}>
@@ -286,7 +286,7 @@ function NewProposal() {
                 value={form.modality}
                 onChange={(v) => set("modality", v)}
                 options={[
-                  { value: "primme", label: "Primme", hint: `${currency(prices.primme)}/mês` },
+                  { value: "primme", label: "Comodato", hint: `${currency(prices.primme)}/mês` },
                   { value: "compra", label: "Compra", hint: `${currency(prices.equipment)} à vista` },
                 ]}
               />
@@ -328,7 +328,7 @@ function NewProposal() {
                   {(
                     [
                       ["equipment", "Equipamento"],
-                      ["primme", "Primme/mês"],
+                      ["primme", "Comodato/mês"],
                       ["pro", "Pro/mês"],
                       ["ultimate", "Ultimate/mês"],
                     ] as const
@@ -413,7 +413,7 @@ function NewProposal() {
                     "Solução",
                     `Relógio de ponto facial · ${form.device_qty} equipamento(s)`,
                   ],
-                  ["Proteção", form.modality === "primme" ? "Primme" : "Compra do equipamento"],
+                  ["Proteção", form.modality === "primme" ? "Comodato" : "Compra do equipamento"],
                   [
                     "Gestão",
                     form.system_plan === "nenhum"

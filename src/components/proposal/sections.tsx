@@ -471,7 +471,7 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
     node: (
       <Section tone="surface">
         <Eyebrow>Modalidades</Eyebrow>
-        <h2 className="text-3xl font-semibold sm:text-4xl">Compra ou Primme</h2>
+        <h2 className="text-3xl font-semibold sm:text-4xl">Compra ou Comodato</h2>
         <div className="mt-10 grid gap-5 md:grid-cols-2">
           <div
             className={`rounded-xl border bg-card p-7 shadow-soft ${p.modality === "compra" ? "border-brand" : "border-border"}`}
@@ -498,7 +498,7 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
             className={`rounded-xl border bg-card p-7 shadow-soft ${p.modality === "primme" ? "border-brand" : "border-border"}`}
           >
             <p className="text-sm font-semibold uppercase tracking-widest text-institutional">
-              Primme
+              Comodato
             </p>
             <p className="mt-3 text-3xl font-semibold">
               {currency(prices.primme)}
@@ -535,7 +535,7 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
             { t: "Equipamento", d: "Relógio facial", i: ScanFace },
             { t: "Gestão", d: "Sistema Dataponto / Secullum", i: MonitorSmartphone },
             { t: "Implementação", d: "Configuração, integração e treinamento", i: Wrench },
-            { t: "Proteção", d: "Primme, suporte e manutenção", i: ShieldCheck },
+            { t: "Proteção", d: "Comodato, suporte e manutenção", i: ShieldCheck },
           ].map((c) => (
             <div key={c.t} className="glass-card rounded-2xl p-6">
               <c.i className="h-5 w-5 text-brand" strokeWidth={1.75} />
@@ -566,9 +566,9 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
                 v:
                   p.modality === "compra"
                     ? `${currency(prices.equipment)} à vista`
-                    : "Incluso no Primme",
+                    : "Incluso no Comodato",
               },
-              { l: "Modalidade", v: p.modality === "primme" ? "Primme" : "Compra" },
+              { l: "Modalidade", v: p.modality === "primme" ? "Comodato" : "Compra" },
               {
                 l: "Sistema",
                 v:

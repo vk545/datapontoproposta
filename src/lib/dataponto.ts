@@ -80,7 +80,7 @@ export const NEEDS: Record<NeedKey, Narrative> = {
     highlights: [
       "Equipamento novo pré-configurado antes do envio",
       "Cadastro remoto dos colaboradores",
-      "Manutenção, peças e mão de obra na modalidade Primme",
+      "Manutenção, peças e mão de obra na modalidade Comodato",
       "Baixa necessidade de manutenção",
     ],
     recommend: { modality: "primme", plan: "pro" },
@@ -158,7 +158,7 @@ export const NEEDS: Record<NeedKey, Narrative> = {
       "Sem treinamento contínuo, a equipe depende de tentativa e erro.",
     ],
     highlights: [
-      "Primme: manutenção, peças e mão de obra",
+      "Comodato: manutenção, peças e mão de obra",
       "Suporte e treinamento",
       "Visitas técnicas na Grande São Paulo",
       "Continuidade da operação após a implantação",
@@ -255,7 +255,7 @@ export const SECTION_LABELS: Record<SectionKey, string> = {
   comparacao: "Comparação Pro x Ultimate",
   implementacao: "Implementação",
   protecao: "Proteção e continuidade",
-  modalidade: "Compra x Primme",
+  modalidade: "Compra x Comodato",
   completa: "A solução completa",
   investimento: "Investimento",
   cta: "Próximo passo",
