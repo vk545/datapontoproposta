@@ -149,14 +149,30 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
               aria-hidden
               className="pulse-ring absolute left-1/2 top-1/2 -z-10 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand/40"
             />
+            <span className="dp-glass-dark dp-float absolute -left-2 top-6 z-10 rounded-2xl px-4 py-2.5 text-institutional-foreground shadow-lg">
+              <span className="block text-[9px] font-semibold uppercase tracking-[0.24em] text-brand">
+                Identificação
+              </span>
+              <span className="text-xs font-medium">Reconhecimento facial</span>
+            </span>
+            <span
+              className="dp-glass-dark dp-float absolute -right-2 bottom-8 z-10 rounded-2xl px-4 py-2.5 text-institutional-foreground shadow-lg"
+              style={{ animationDelay: "1.4s" }}
+            >
+              <span className="block text-[9px] font-semibold uppercase tracking-[0.24em] text-brand">
+                Operação
+              </span>
+              <span className="text-xs font-medium">100% offline</span>
+            </span>
             <ProductImage
               code="relogio_facial"
               fallback={relogioImg}
               alt="Relógio de ponto facial Dataponto"
               eager
-              className="mx-auto w-full max-w-lg drop-shadow-2xl"
+              className="dp-float mx-auto w-full max-w-lg drop-shadow-2xl"
             />
           </div>
+
         </div>
       </Section>
     ),
