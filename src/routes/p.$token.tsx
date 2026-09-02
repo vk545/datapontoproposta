@@ -41,8 +41,12 @@ export const Route = createFileRoute("/p/$token")({
 function PublicProposal() {
   const { token } = Route.useParams();
   const [approved, setApproved] = useState(false);
+  const [rejected, setRejected] = useState(false);
+  const [reason, setReason] = useState("");
+  const [rejectOpen, setRejectOpen] = useState(false);
   const [form, setForm] = useState({ name: "", role_title: "", email: "" });
   const [open, setOpen] = useState(false);
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["public-proposal", token],
@@ -60,7 +64,9 @@ function PublicProposal() {
   useEffect(() => {
     if (!data) return;
     setApproved(!!data.approved_at);
+    setRejected(data.status === "recusada" || !!(data as { rejected_at?: string }).rejected_at);
     const now = new Date().toISOString();
+
     supabase.from("proposal_views").insert({ proposal_id: data.id } as never).then(() => {});
     supabase
       .from("proposals")
