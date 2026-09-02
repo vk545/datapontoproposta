@@ -260,8 +260,134 @@
   }
 }
 
+/* ============ Efeitos Dataponto (dp-*) ============ */
+
+@utility dp-glass {
+  background: color-mix(in oklch, var(--color-card) 65%, transparent);
+  backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in oklch, var(--color-brand) 20%, var(--color-border));
+}
+
+@utility dp-glass-dark {
+  background: color-mix(in oklch, white 7%, transparent);
+  backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in oklch, white 14%, transparent);
+}
+
+@utility dp-glow-green {
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--color-brand) 35%, transparent),
+    0 0 60px -12px color-mix(in oklch, var(--color-brand) 70%, transparent);
+}
+
+@utility dp-glow-purple {
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--color-institutional) 45%, transparent),
+    0 0 60px -12px color-mix(in oklch, var(--color-institutional) 85%, transparent);
+}
+
+@utility dp-grid-bg {
+  background-image:
+    linear-gradient(to right, color-mix(in oklch, var(--color-brand) 12%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--color-brand) 12%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(110% 90% at 50% 20%, black 0%, transparent 80%);
+}
+
+@utility dp-aurora {
+  background:
+    radial-gradient(45% 55% at 15% 20%, color-mix(in oklch, var(--color-brand) 30%, transparent) 0%, transparent 70%),
+    radial-gradient(50% 60% at 85% 15%, color-mix(in oklch, var(--color-institutional) 55%, transparent) 0%, transparent 70%),
+    radial-gradient(45% 55% at 60% 90%, color-mix(in oklch, var(--color-brand) 22%, transparent) 0%, transparent 70%);
+  filter: blur(30px);
+  animation: dp-aurora 18s ease-in-out infinite alternate;
+}
+
+@keyframes dp-aurora {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate3d(2%, 2%, 0) scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-1%, 1%, 0) scale(1.03);
+    opacity: 0.8;
+  }
+}
+
+@utility dp-float {
+  animation: dp-float 6s ease-in-out infinite;
+}
+
+@keyframes dp-float {
+  0%,
+  100% {
+    transform: translateY(-6px);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+@utility dp-shimmer {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      transparent 30%,
+      color-mix(in oklch, white 32%, transparent) 50%,
+      transparent 70%
+    );
+    transform: translateX(-100%);
+    animation: dp-shimmer 4.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+@keyframes dp-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  60%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@utility dp-gradient-text {
+  background: linear-gradient(
+    100deg,
+    var(--color-brand) 0%,
+    color-mix(in oklch, var(--color-institutional) 60%, white) 40%,
+    var(--color-brand) 80%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-float,
+  .dp-aurora,
+  .dp-shimmer::after,
+  .dp-gradient-text {
+    animation: none !important;
+  }
+}
+
 @media print {
   .no-print {
     display: none !important;
   }
 }
+

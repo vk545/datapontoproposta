@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useVisibleSections } from "@/components/proposal/ProposalDocument";
@@ -72,11 +73,22 @@ function Present() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <div className="flex-1 overflow-y-auto">
-        <div key={current?.key} className="fade-up min-h-full">
-          {current?.node}
-        </div>
+      <div className="flex-1 overflow-y-auto" style={{ perspective: "1600px" }}>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={current?.key}
+            initial={{ opacity: 0, rotateY: 14, scale: 0.94, x: 60, filter: "blur(14px)" }}
+            animate={{ opacity: 1, rotateY: 0, scale: 1, x: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, rotateY: -12, scale: 0.94, x: -60, filter: "blur(14px)" }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            className="min-h-full"
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            {current?.node}
+          </motion.div>
+        </AnimatePresence>
       </div>
+
 
       <div className="sticky bottom-0 border-t border-border bg-card/95 px-6 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
