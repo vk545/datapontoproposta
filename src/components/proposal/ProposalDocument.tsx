@@ -1,4 +1,5 @@
 import { buildSections } from "./sections";
+import { Reveal } from "./motion";
 import { sectionsOf, type Proposal } from "@/lib/proposal";
 import { SECTION_ORDER, type SectionKey } from "@/lib/dataponto";
 
