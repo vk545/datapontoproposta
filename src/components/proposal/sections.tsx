@@ -291,45 +291,89 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
   items.push({
     key: "sistema",
     node: (
-      <Section>
-        <Eyebrow>Gestão</Eyebrow>
-        <h2 className="max-w-3xl text-3xl font-semibold text-balance-tight sm:text-4xl">
-          O relógio registra. O sistema transforma os registros em gestão.
-        </h2>
-        <div className="mt-12 grid gap-3 sm:grid-cols-4">
+      <Section tone="institutional">
+        <div aria-hidden className="dp-aurora pointer-events-none absolute inset-0 opacity-40" />
+        <div aria-hidden className="dp-grid-bg pointer-events-none absolute inset-0 opacity-70" />
+        <Reveal>
+          <Eyebrow>Gestão</Eyebrow>
+          <h2 className="max-w-3xl text-3xl font-semibold text-balance-tight sm:text-4xl">
+            O relógio registra.{" "}
+            <span className="dp-gradient-text">O sistema transforma os registros em gestão.</span>
+          </h2>
+        </Reveal>
+
+        <Stagger className="mt-8 flex flex-wrap items-center gap-2">
           {[
             { t: "Relógio", i: Fingerprint },
             { t: "Registros", i: Cpu },
             { t: "Sistema", i: MonitorSmartphone },
             { t: "Gestão", i: Gauge },
           ].map((s, i) => (
-            <div key={s.t} className="flex items-center gap-3">
-              <div className="flex flex-1 items-center gap-3 glass-card rounded-2xl px-5 py-4">
-                <s.i className="h-5 w-5 text-brand" strokeWidth={1.75} />
-                <span className="text-sm font-semibold">{s.t}</span>
+            <StaggerItem key={s.t} className="flex items-center gap-2">
+              <span className="dp-glass-dark inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium text-institutional-foreground">
+                <s.i className="h-4 w-4 text-brand" strokeWidth={1.75} />
+                {s.t}
+              </span>
+              {i < 3 ? <ArrowRight className="h-4 w-4 shrink-0 text-brand/70" /> : null}
+            </StaggerItem>
+          ))}
+        </Stagger>
+
+        <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_1fr]">
+          <Stagger className="grid gap-4 sm:grid-cols-2">
+            {[
+              { t: "Acesso pelo navegador", i: MonitorSmartphone },
+              { t: "Relatórios", i: FileText },
+              { t: "Acompanhamento da jornada", i: BarChart3 },
+              { t: "Registro pelo celular", i: Smartphone },
+              { t: "Geolocalização", i: MapPin },
+              { t: "Foto no registro", i: Camera },
+            ].map((f) => (
+              <StaggerItem
+                key={f.t}
+                className="dp-glass-dark h-full rounded-2xl p-5 transition-transform duration-300 hover:-translate-y-1"
+              >
+                <span className="inline-flex rounded-xl bg-brand/12 p-2.5 ring-1 ring-brand/25">
+                  <f.i className="h-5 w-5 text-brand" strokeWidth={1.75} />
+                </span>
+                <p className="mt-4 text-base font-medium text-institutional-foreground">{f.t}</p>
+              </StaggerItem>
+            ))}
+            <p className="text-sm text-institutional-foreground/65 sm:col-span-2">
+              Os colaboradores também contam com aplicativo próprio para acompanhar seus registros.
+            </p>
+          </Stagger>
+
+          <Reveal delay={0.15} className="relative">
+            <div
+              aria-hidden
+              className="absolute -inset-6 -z-10 rounded-[2rem] bg-brand/15 blur-3xl"
+            />
+            <div className="dp-glass-dark dp-glow-purple dp-shimmer relative overflow-hidden rounded-3xl p-5">
+              <span className="dp-glass-dark dp-float absolute right-6 top-6 z-10 rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-brand">
+                Nuvem · Tempo real
+              </span>
+              <ProductImage
+                code="secullum_pro"
+                fallback={secullumImg}
+                alt="Sistema de gestão de ponto Secullum RH"
+                className="dp-float w-full rounded-2xl object-cover drop-shadow-2xl"
+              />
+              <div className="mt-5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-brand">
+                  Sistema de gestão
+                </p>
+                <p className="mt-1 text-lg font-semibold text-institutional-foreground">
+                  Secullum RH Pro
+                </p>
               </div>
-              {i < 3 ? (
-                <ArrowRight className="hidden h-4 w-4 shrink-0 text-muted-foreground sm:block" />
-              ) : null}
             </div>
-          ))}
-        </div>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          {[
-            "Acesso pelo navegador, sem instalação local",
-            "Relatórios e acompanhamento da jornada",
-            "Registro mobile com geolocalização e foto",
-            "Aplicativo do colaborador",
-          ].map((t) => (
-            <div key={t} className="flex items-start gap-3">
-              <Check className="mt-1 h-4 w-4 shrink-0 text-brand" strokeWidth={2.25} />
-              <p className="text-base text-muted-foreground">{t}</p>
-            </div>
-          ))}
+          </Reveal>
         </div>
       </Section>
     ),
   });
+
 
   items.push({
     key: "comparacao",
