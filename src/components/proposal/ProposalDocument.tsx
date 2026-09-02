@@ -21,10 +21,10 @@ export function ProposalDocument({
   const sections = useVisibleSections(proposal, publicView);
   return (
     <div className="w-full">
-      {sections.map((s) => (
-        <div key={s.key} className="fade-up">
+      {sections.map((s, i) => (
+        <Reveal key={s.key} delay={i === 0 ? 0 : 0.05} y={i === 0 ? 0 : 28}>
           {s.node}
-        </div>
+        </Reveal>
       ))}
     </div>
   );
