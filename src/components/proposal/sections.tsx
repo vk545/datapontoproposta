@@ -2,15 +2,19 @@ import { useMemo, useState } from "react";
 import {
   ArrowRight,
   BadgeCheck,
+  BarChart3,
   Building2,
   CalendarClock,
+  Camera,
   Check,
   Clock,
   Cpu,
+  FileText,
   Fingerprint,
   Gauge,
   LifeBuoy,
   Mail,
+  MapPin,
   MonitorSmartphone,
   Phone,
   ScanFace,
@@ -21,8 +25,11 @@ import {
   Wrench,
 } from "lucide-react";
 import relogioImg from "@/assets/relogio-tech.png";
+import secullumImg from "@/assets/secullum-dashboard.jpg";
 import techBg from "@/assets/tech-bg.jpg";
+import { Reveal, Stagger, StaggerItem } from "@/components/proposal/motion";
 import { BrandLogo, ProductImage } from "@/lib/brand";
+
 import {
   EQUIPMENT_FEATURES,
   IMPLEMENTATION_STEPS,
