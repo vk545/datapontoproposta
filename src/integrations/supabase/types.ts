@@ -107,6 +107,7 @@ export type Database = {
       products: {
         Row: {
           active: boolean
+          area_id: string | null
           benefits: Json
           billing: string
           code: string
@@ -115,15 +116,19 @@ export type Database = {
           description: string
           features: Json
           gallery: Json
+          highlight: string
           id: string
           kind: string
           main_image_url: string | null
           name: string
           sort_order: number
+          subcategory_id: string | null
+          tech_note: string
           updated_at: string
         }
         Insert: {
           active?: boolean
+          area_id?: string | null
           benefits?: Json
           billing?: string
           code: string
@@ -132,15 +137,19 @@ export type Database = {
           description?: string
           features?: Json
           gallery?: Json
+          highlight?: string
           id?: string
           kind?: string
           main_image_url?: string | null
           name: string
           sort_order?: number
+          subcategory_id?: string | null
+          tech_note?: string
           updated_at?: string
         }
         Update: {
           active?: boolean
+          area_id?: string | null
           benefits?: Json
           billing?: string
           code?: string
@@ -149,14 +158,32 @@ export type Database = {
           description?: string
           features?: Json
           gallery?: Json
+          highlight?: string
           id?: string
           kind?: string
           main_image_url?: string | null
           name?: string
           sort_order?: number
+          subcategory_id?: string | null
+          tech_note?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "products_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "solution_areas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "solution_subcategories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -232,6 +259,164 @@ export type Database = {
           },
         ]
       }
+      proposal_products: {
+        Row: {
+          area_code: string
+          billing: string
+          created_at: string
+          id: string
+          name: string
+          product_id: string | null
+          proposal_id: string
+          quantity: number
+          scenario: string
+          sort_order: number
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          area_code?: string
+          billing?: string
+          created_at?: string
+          id?: string
+          name?: string
+          product_id?: string | null
+          proposal_id: string
+          quantity?: number
+          scenario?: string
+          sort_order?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          area_code?: string
+          billing?: string
+          created_at?: string
+          id?: string
+          name?: string
+          product_id?: string | null
+          proposal_id?: string
+          quantity?: number
+          scenario?: string
+          sort_order?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposal_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposal_products_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      proposal_scenarios: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          key: string
+          monthly_total: number
+          proposal_id: string
+          recommended: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+          upfront_total: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          key?: string
+          monthly_total?: number
+          proposal_id: string
+          recommended?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          upfront_total?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          key?: string
+          monthly_total?: number
+          proposal_id?: string
+          recommended?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          upfront_total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposal_scenarios_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      proposal_solutions: {
+        Row: {
+          area_code: string
+          area_id: string | null
+          created_at: string
+          id: string
+          proposal_id: string
+          sort_order: number
+          updated_at: string
+          why_text: string
+        }
+        Insert: {
+          area_code?: string
+          area_id?: string | null
+          created_at?: string
+          id?: string
+          proposal_id: string
+          sort_order?: number
+          updated_at?: string
+          why_text?: string
+        }
+        Update: {
+          area_code?: string
+          area_id?: string | null
+          created_at?: string
+          id?: string
+          proposal_id?: string
+          sort_order?: number
+          updated_at?: string
+          why_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposal_solutions_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "solution_areas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposal_solutions_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       proposal_views: {
         Row: {
           id: string
@@ -288,6 +473,7 @@ export type Database = {
           problem_text: string | null
           public_token: string
           rejected_at: string | null
+          rejection_note: string | null
           rejection_reason: string | null
           sections: Json
           seller_email: string | null
@@ -332,6 +518,7 @@ export type Database = {
           problem_text?: string | null
           public_token?: string
           rejected_at?: string | null
+          rejection_note?: string | null
           rejection_reason?: string | null
           sections?: Json
           seller_email?: string | null
@@ -376,6 +563,7 @@ export type Database = {
           problem_text?: string | null
           public_token?: string
           rejected_at?: string | null
+          rejection_note?: string | null
           rejection_reason?: string | null
           sections?: Json
           seller_email?: string | null
@@ -397,6 +585,86 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      solution_areas: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      solution_subcategories: {
+        Row: {
+          active: boolean
+          area_id: string
+          code: string
+          created_at: string
+          description: string
+          id: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          area_id: string
+          code: string
+          created_at?: string
+          description?: string
+          id?: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          area_id?: string
+          code?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "solution_subcategories_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "solution_areas"
             referencedColumns: ["id"]
           },
         ]

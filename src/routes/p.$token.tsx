@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Check, Download, MessageCircle } from "lucide-react";
+import { Check, Download, MessageCircle, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ProposalDocument } from "@/components/proposal/ProposalDocument";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -43,6 +44,7 @@ function PublicProposal() {
   const [approved, setApproved] = useState(false);
   const [rejected, setRejected] = useState(false);
   const [reason, setReason] = useState("");
+  const [note, setNote] = useState("");
   const [rejectOpen, setRejectOpen] = useState(false);
   const [form, setForm] = useState({ name: "", role_title: "", email: "" });
   const [open, setOpen] = useState(false);
@@ -124,6 +126,30 @@ function PublicProposal() {
     toast.success("Proposta aprovada com sucesso.");
   }
 
+  async function reject() {
+    if (!reason.trim() || !data) {
+      toast.error("Informe o motivo da recusa.");
+      return;
+    }
+    const now = new Date().toISOString();
+    const { error } = await supabase
+      .from("proposals")
+      .update({
+        status: "recusada",
+        rejected_at: now,
+        rejection_reason: reason.trim(),
+        rejection_note: note.trim(),
+      } as never)
+      .eq("id", data.id);
+    if (error) {
+      toast.error("Não foi possível registrar a recusa.");
+      return;
+    }
+    setRejected(true);
+    setRejectOpen(false);
+    toast.success("Recusa registrada. Obrigado pelo retorno.");
+  }
+
   const waLink = data.seller_phone
     ? `https://wa.me/55${(data.seller_phone || "").replace(/\D/g, "")}?text=${encodeURIComponent(
         `Olá! Estou vendo a proposta da ${data.company_name} e tenho algumas dúvidas.`,
@@ -148,10 +174,20 @@ function PublicProposal() {
                 </a>
               </Button>
             ) : null}
-            {!expired && !approved ? (
-              <Button size="sm" onClick={() => setOpen(true)}>
-                Aprovar proposta
-              </Button>
+            {!expired && !approved && !rejected ? (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground"
+                  onClick={() => setRejectOpen(true)}
+                >
+                  Recusar
+                </Button>
+                <Button size="sm" onClick={() => setOpen(true)}>
+                  Aprovar proposta
+                </Button>
+              </>
             ) : null}
           </div>
         </div>
@@ -194,6 +230,43 @@ function PublicProposal() {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Recusar proposta</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Motivo da recusa</Label>
+              <Input
+                className="mt-1.5"
+                placeholder="Ex.: valor acima do orçamento"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+              />
+            </div>
+            <div>
+              <Label>Observação (opcional)</Label>
+              <Textarea
+                className="mt-1.5"
+                rows={4}
+                placeholder="Conte o que poderia tornar a proposta viável."
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRejectOpen(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={reject}>
+              Confirmar recusa
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {expired ? (
         <div className="mx-auto max-w-5xl px-6 pt-6">
           <div className="rounded-xl border border-border bg-surface p-5 text-sm">
@@ -207,7 +280,12 @@ function PublicProposal() {
 
       <section className="no-print border-t border-border bg-surface">
         <div className="mx-auto max-w-5xl px-6 py-14 text-center">
-          {approved ? (
+          {rejected ? (
+            <div className="inline-flex items-center gap-2 rounded-full border border-destructive/30 bg-destructive/10 px-5 py-2.5 text-sm font-medium text-destructive">
+              <X className="h-4 w-4" strokeWidth={2.5} />
+              Proposta recusada. Seu consultor entrará em contato.
+            </div>
+          ) : approved ? (
             <div className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand-soft px-5 py-2.5 text-sm font-medium text-institutional">
               <Check className="h-4 w-4 text-brand" strokeWidth={2.5} />
               Proposta aprovada com sucesso.
@@ -216,6 +294,14 @@ function PublicProposal() {
             <div className="flex flex-wrap justify-center gap-3">
               <Button size="lg" onClick={() => setOpen(true)} disabled={expired}>
                 Aprovar proposta
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => setRejectOpen(true)}
+                disabled={expired}
+              >
+                Recusar proposta
               </Button>
               {waLink ? (
                 <Button size="lg" variant="outline" asChild>
