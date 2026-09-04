@@ -124,6 +124,30 @@ function PublicProposal() {
     toast.success("Proposta aprovada com sucesso.");
   }
 
+  async function reject() {
+    if (!reason.trim() || !data) {
+      toast.error("Informe o motivo da recusa.");
+      return;
+    }
+    const now = new Date().toISOString();
+    const { error } = await supabase
+      .from("proposals")
+      .update({
+        status: "recusada",
+        rejected_at: now,
+        rejection_reason: reason.trim(),
+        rejection_note: note.trim(),
+      } as never)
+      .eq("id", data.id);
+    if (error) {
+      toast.error("Não foi possível registrar a recusa.");
+      return;
+    }
+    setRejected(true);
+    setRejectOpen(false);
+    toast.success("Recusa registrada. Obrigado pelo retorno.");
+  }
+
   const waLink = data.seller_phone
     ? `https://wa.me/55${(data.seller_phone || "").replace(/\D/g, "")}?text=${encodeURIComponent(
         `Olá! Estou vendo a proposta da ${data.company_name} e tenho algumas dúvidas.`,
