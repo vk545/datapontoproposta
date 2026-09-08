@@ -49,6 +49,8 @@ export type Proposal = {
   approved_at: string | null;
   created_at: string;
   updated_at: string;
+  /** Categorias de solução da proposta (ex.: ["ponto","acesso"]). */
+  area_codes?: string[] | null;
 };
 
 export const narrativeOf = (p: Pick<Proposal, "need_key">) =>

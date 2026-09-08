@@ -43,6 +43,13 @@ import {
   numberBR,
 } from "@/lib/dataponto";
 import { calculatorOf, narrativeOf, pricesOf, type Proposal } from "@/lib/proposal";
+import {
+  PONTO,
+  groupByArea,
+  hasPonto,
+  totalInvestment,
+  type ProposalItem,
+} from "@/lib/solutions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -80,15 +87,20 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
+export function buildSections(
+  p: Proposal,
+  opts?: { publicView?: boolean; items?: ProposalItem[]; areaNames?: Record<string, string> },
+) {
   const n = narrativeOf(p);
   const prices = pricesOf(p);
-  const inv = calcInvestment({
-    modality: p.modality,
-    plan: p.system_plan,
-    deviceQty: p.device_qty,
-    prices,
-  });
+  const items = opts?.items ?? [];
+  const ponto = hasPonto(p);
+  const total = totalInvestment(p, items);
+  const inv = { ...total.ponto, monthly: total.monthly, upfront: total.upfront };
+  const extraItems = items.filter((i) => i.area_code !== PONTO);
+  const extraGroups = groupByArea(extraItems);
+  const areaNames = opts?.areaNames ?? {};
+  const coverItem = extraItems.find((i) => i.image_url) ?? extraItems[0] ?? null;
   const texts = p.texts ?? {};
   const publicView = opts?.publicView ?? false;
 
@@ -121,7 +133,10 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
             </p>
             <h2 className="mt-1 text-2xl font-semibold">{p.company_name || "—"}</h2>
             <h1 className="text-gradient-brand mt-7 text-4xl font-semibold leading-[1.08] text-balance-tight sm:text-5xl">
-              {texts['cover_title'] || "Controle de ponto pensado para a sua operação."}
+              {texts['cover_title'] ||
+                (ponto
+                  ? "Controle de ponto pensado para a sua operação."
+                  : "Uma solução pensada para a sua operação.")}
             </h1>
             <p className="mt-5 max-w-lg text-lg text-institutional-foreground/80">
               {texts['cover_subtitle'] || n.subtitle}
@@ -149,28 +164,54 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
               aria-hidden
               className="pulse-ring absolute left-1/2 top-1/2 -z-10 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand/40"
             />
-            <span className="dp-glass-dark dp-float absolute -left-2 top-6 z-10 rounded-2xl px-4 py-2.5 text-institutional-foreground shadow-lg">
-              <span className="block text-[9px] font-semibold uppercase tracking-[0.24em] text-brand">
-                Identificação
-              </span>
-              <span className="text-xs font-medium">Reconhecimento facial</span>
-            </span>
-            <span
-              className="dp-glass-dark dp-float absolute -right-2 bottom-8 z-10 rounded-2xl px-4 py-2.5 text-institutional-foreground shadow-lg"
-              style={{ animationDelay: "1.4s" }}
-            >
-              <span className="block text-[9px] font-semibold uppercase tracking-[0.24em] text-brand">
-                Operação
-              </span>
-              <span className="text-xs font-medium">100% offline</span>
-            </span>
-            <ProductImage
-              code="relogio_facial"
-              fallback={relogioImg}
-              alt="Relógio de ponto facial Dataponto"
-              eager
-              className="dp-float mx-auto w-full max-w-lg drop-shadow-2xl"
-            />
+            {ponto ? (
+              <>
+                <span className="dp-glass-dark dp-float absolute -left-2 top-6 z-10 rounded-2xl px-4 py-2.5 text-institutional-foreground shadow-lg">
+                  <span className="block text-[9px] font-semibold uppercase tracking-[0.24em] text-brand">
+                    Identificação
+                  </span>
+                  <span className="text-xs font-medium">Reconhecimento facial</span>
+                </span>
+                <span
+                  className="dp-glass-dark dp-float absolute -right-2 bottom-8 z-10 rounded-2xl px-4 py-2.5 text-institutional-foreground shadow-lg"
+                  style={{ animationDelay: "1.4s" }}
+                >
+                  <span className="block text-[9px] font-semibold uppercase tracking-[0.24em] text-brand">
+                    Operação
+                  </span>
+                  <span className="text-xs font-medium">100% offline</span>
+                </span>
+                <ProductImage
+                  code="relogio_facial"
+                  fallback={relogioImg}
+                  alt="Relógio de ponto facial Dataponto"
+                  eager
+                  className="dp-float mx-auto w-full max-w-lg drop-shadow-2xl"
+                />
+              </>
+            ) : coverItem ? (
+              <>
+                <span className="dp-glass-dark dp-float absolute -left-2 top-6 z-10 rounded-2xl px-4 py-2.5 text-institutional-foreground shadow-lg">
+                  <span className="block text-[9px] font-semibold uppercase tracking-[0.24em] text-brand">
+                    {areaNames[coverItem.area_code] ?? "Solução"}
+                  </span>
+                  <span className="text-xs font-medium">{coverItem.name}</span>
+                </span>
+                {coverItem.image_url ? (
+                  <img
+                    src={coverItem.image_url}
+                    alt={coverItem.name}
+                    className="dp-float mx-auto w-full max-w-lg drop-shadow-2xl"
+                  />
+                ) : (
+                  <img
+                    src={techBg}
+                    alt=""
+                    className="dp-float mx-auto w-full max-w-lg rounded-3xl opacity-80 drop-shadow-2xl"
+                  />
+                )}
+              </>
+            ) : null}
           </div>
 
         </div>
@@ -185,7 +226,9 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
       <Section>
         <Eyebrow>Contexto</Eyebrow>
         <h2 className="max-w-3xl text-3xl font-semibold text-balance-tight sm:text-4xl">
-          O que está por trás de um simples registro de ponto?
+          {ponto
+            ? "O que está por trás de um simples registro de ponto?"
+            : "O que motivou esta proposta?"}
         </h2>
         {p.problem_text ? (
           <div className="mt-8 rounded-xl border border-border bg-surface p-6">
@@ -196,7 +239,7 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
           </div>
         ) : null}
         <div className="mt-10 space-y-5">
-          {n.problems.map((t, i) => (
+          {(ponto ? n.problems : []).map((t, i) => (
             <div key={i} className="flex gap-4 border-l-2 border-brand/40 pl-5">
               <p className="text-lg leading-relaxed text-muted-foreground">{t}</p>
             </div>
@@ -626,34 +669,72 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
           O investimento para colocar essa solução em operação
         </h2>
         <div className="mt-12 grid gap-8 md:grid-cols-[1.2fr_0.8fr]">
-          <div className="space-y-0 rounded-xl border border-white/10 bg-white/5 p-2">
-            {[
-              {
-                l: "Equipamento",
-                v:
-                  p.modality === "compra"
-                    ? `${currency(prices.equipment)} à vista`
-                    : "Incluso no Comodato",
-              },
-              { l: "Modalidade", v: p.modality === "primme" ? "Comodato" : "Compra" },
-              {
-                l: "Sistema",
-                v:
-                  p.system_plan === "nenhum"
-                    ? "Não incluído"
-                    : p.system_plan === "pro"
-                      ? "Secullum RH Pro"
-                      : "Secullum RH Ultimate",
-              },
-              { l: "Equipamentos", v: `${p.device_qty}` },
-              { l: "Licenças", v: `${p.licenses} colaboradores` },
-            ].map((r) => (
-              <div
-                key={r.l}
-                className="flex items-center justify-between border-b border-white/10 px-5 py-4 text-sm last:border-0"
-              >
-                <span className="text-institutional-foreground/70">{r.l}</span>
-                <span className="font-medium">{r.v}</span>
+          <div className="space-y-4">
+            {ponto ? (
+              <div className="rounded-xl border border-white/10 bg-white/5 p-2">
+                {extraGroups.size > 0 ? (
+                  <p className="px-5 pt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand">
+                    Controle de Ponto
+                  </p>
+                ) : null}
+                {[
+                  {
+                    l: "Equipamento",
+                    v:
+                      p.modality === "compra"
+                        ? `${currency(prices.equipment)} à vista`
+                        : "Incluso no Comodato",
+                  },
+                  { l: "Modalidade", v: p.modality === "primme" ? "Comodato" : "Compra" },
+                  {
+                    l: "Sistema",
+                    v:
+                      p.system_plan === "nenhum"
+                        ? "Não incluído"
+                        : p.system_plan === "pro"
+                          ? "Secullum RH Pro"
+                          : "Secullum RH Ultimate",
+                  },
+                  { l: "Equipamentos", v: `${p.device_qty}` },
+                  { l: "Licenças", v: `${p.licenses} colaboradores` },
+                ].map((r) => (
+                  <div
+                    key={r.l}
+                    className="flex items-center justify-between border-b border-white/10 px-5 py-4 text-sm last:border-0"
+                  >
+                    <span className="text-institutional-foreground/70">{r.l}</span>
+                    <span className="font-medium">{r.v}</span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            {[...extraGroups.entries()].map(([code, rows]) => (
+              <div key={code} className="rounded-xl border border-white/10 bg-white/5 p-2">
+                <p className="px-5 pt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand">
+                  {areaNames[code] ?? code}
+                </p>
+                {rows.map((r, i) => (
+                  <div
+                    key={r.id ?? `${code}-${i}`}
+                    className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4 text-sm last:border-0"
+                  >
+                    <span className="text-institutional-foreground/80">
+                      {r.quantity}× {r.name}
+                      <span className="ml-2 text-xs text-institutional-foreground/50">
+                        {currency(r.unit_price)}
+                        {r.billing === "monthly" ? "/mês" : ""}
+                      </span>
+                    </span>
+                    <span className="font-medium">
+                      {currency(r.unit_price * r.quantity)}
+                      {r.billing === "monthly" ? (
+                        <span className="text-xs font-normal text-institutional-foreground/60">
+                          /mês
+                        </span>
+                      ) : null}
+                    </span>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
@@ -683,7 +764,9 @@ export function buildSections(p: Proposal, opts?: { publicView?: boolean }) {
       <Section>
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-semibold text-balance-tight sm:text-4xl">
-            Pronto para transformar o controle de ponto da sua empresa?
+            {ponto
+              ? "Pronto para transformar o controle de ponto da sua empresa?"
+              : "Pronto para dar o próximo passo?"}
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Uma solução pensada para tornar sua operação mais segura, ágil e simples de administrar.
