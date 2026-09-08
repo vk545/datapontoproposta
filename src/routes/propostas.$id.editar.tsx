@@ -359,6 +359,10 @@ function Editor() {
             </Card>
           </TabsContent>
 
+          <TabsContent value="configurador" className="mt-6">
+            <SolutionBuilder proposalId={id} />
+          </TabsContent>
+
           <TabsContent value="secoes" className="mt-6">
             <Card>
               <p className="text-sm font-semibold">Módulos ativáveis</p>
