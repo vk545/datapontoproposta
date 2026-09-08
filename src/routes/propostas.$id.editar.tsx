@@ -458,7 +458,7 @@ function Editor() {
                     `Enviada: ${draft.sent_at ? "sim" : "não"} · Visualizada: ${draft.first_viewed_at ? "sim" : "não"} · Aprovada: ${draft.approved_at ? "sim" : "não"}`,
                   ],
                 ].map(([l, v]) => (
-                  <div key={l + v} className="grid gap-1 py-3.5 text-sm sm:grid-cols-[220px_1fr]">
+                  <div key={`${l}${v}`} className="grid gap-1 py-3.5 text-sm sm:grid-cols-[220px_1fr]">
                     <dt className="text-muted-foreground">{l}</dt>
                     <dd className="font-medium">{v}</dd>
                   </div>

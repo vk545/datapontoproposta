@@ -34,7 +34,7 @@ export function AreaModule({
             {name}
           </p>
           <h2 className="max-w-3xl text-3xl font-semibold sm:text-4xl">
-            {items.length === 1 ? items[0].name : `${name} para a sua operação.`}
+            {items.length === 1 ? items[0]!.name : `${name} para a sua operação.`}
           </h2>
           {why ? (
             <p className="mt-5 max-w-2xl text-lg leading-relaxed text-institutional-foreground/80">

@@ -526,7 +526,7 @@ function NewProposal() {
                     `${currency(inv.monthly)}/mês${inv.upfront ? ` + ${currency(inv.upfront)} inicial` : ""}`,
                   ],
                 ].map(([l, v]) => (
-                  <div key={l + v} className="grid grid-cols-[200px_1fr] gap-4 py-3.5 text-sm">
+                  <div key={`${l}${v}`} className="grid grid-cols-[200px_1fr] gap-4 py-3.5 text-sm">
                     <dt className="text-muted-foreground">{l}</dt>
                     <dd className="font-medium">{v}</dd>
                   </div>

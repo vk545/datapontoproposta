@@ -93,11 +93,11 @@ export function buildSections(
 ) {
   const n = narrativeOf(p);
   const prices = pricesOf(p);
-  const items = opts?.items ?? [];
+  const proposalItems = opts?.items ?? [];
   const ponto = hasPonto(p);
-  const total = totalInvestment(p, items);
+  const total = totalInvestment(p, proposalItems);
   const inv = { ...total.ponto, monthly: total.monthly, upfront: total.upfront };
-  const extraItems = items.filter((i) => i.area_code !== PONTO);
+  const extraItems = proposalItems.filter((i) => i.area_code !== PONTO);
   const extraGroups = groupByArea(extraItems);
   const areaNames = opts?.areaNames ?? {};
   const coverItem = extraItems.find((i) => i.image_url) ?? extraItems[0] ?? null;
