@@ -81,6 +81,9 @@ function ProposalsList() {
         first_viewed_at: null,
         last_viewed_at: null,
         approved_at: null,
+        rejected_at: null,
+        rejection_reason: null,
+        rejection_note: null,
       } as never)
       .select("id")
       .single();
