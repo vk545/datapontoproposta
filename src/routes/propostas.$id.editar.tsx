@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppShell, PageHeader } from "@/components/AppShell";
 import { StatusBadge } from "@/components/StatusBadge";
 import { ProposalDocument } from "@/components/proposal/ProposalDocument";
+import { SolutionBuilder } from "@/components/proposal/SolutionBuilder";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -147,6 +148,7 @@ function Editor() {
           <TabsList>
             <TabsTrigger value="dados">Cliente</TabsTrigger>
             <TabsTrigger value="solucao">Solução e preços</TabsTrigger>
+            <TabsTrigger value="configurador">Configurador</TabsTrigger>
             <TabsTrigger value="secoes">Seções e textos</TabsTrigger>
             <TabsTrigger value="raiox">Raio-X</TabsTrigger>
             <TabsTrigger value="preview">Pré-visualizar</TabsTrigger>
@@ -356,6 +358,10 @@ function Editor() {
                 </p>
               </div>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="configurador" className="mt-6">
+            <SolutionBuilder proposalId={id} />
           </TabsContent>
 
           <TabsContent value="secoes" className="mt-6">

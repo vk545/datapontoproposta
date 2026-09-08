@@ -1,5 +1,6 @@
 import { buildSections } from "./sections";
 import { Reveal } from "./motion";
+import { SolutionModules } from "./SolutionModules";
 import { sectionsOf, type Proposal } from "@/lib/proposal";
 import { SECTION_ORDER, type SectionKey } from "@/lib/dataponto";
 
@@ -23,9 +24,12 @@ export function ProposalDocument({
   return (
     <div className="w-full">
       {sections.map((s, i) => (
-        <Reveal key={s.key} delay={i === 0 ? 0 : 0.05} y={i === 0 ? 0 : 28}>
-          {s.node}
-        </Reveal>
+        <div key={s.key}>
+          <Reveal delay={i === 0 ? 0 : 0.05} y={i === 0 ? 0 : 28}>
+            {s.node}
+          </Reveal>
+          {s.key === "solucao" && <SolutionModules proposalId={proposal.id} />}
+        </div>
       ))}
     </div>
   );
