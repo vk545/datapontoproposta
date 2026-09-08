@@ -81,6 +81,9 @@ function ProposalsList() {
         first_viewed_at: null,
         last_viewed_at: null,
         approved_at: null,
+        rejected_at: null,
+        rejection_reason: null,
+        rejection_note: null,
       } as never)
       .select("id")
       .single();
@@ -88,8 +91,31 @@ function ProposalsList() {
       toast.error("Não foi possível duplicar.");
       return;
     }
+    const newId = (data as { id: string }).id;
+    // Copia também os produtos e soluções configurados na proposta original.
+    const [items, sols] = await Promise.all([
+      supabase.from("proposal_products").select("*").eq("proposal_id", p.id),
+      supabase.from("proposal_solutions").select("*").eq("proposal_id", p.id),
+    ]);
+    const strip = (row: Record<string, unknown>) => {
+      const { id: _i, created_at: _c, updated_at: _u, ...rest } = row;
+      void _i;
+      void _c;
+      void _u;
+      return { ...rest, proposal_id: newId };
+    };
+    if (items.data?.length) {
+      await supabase
+        .from("proposal_products")
+        .insert((items.data as Record<string, unknown>[]).map(strip) as never);
+    }
+    if (sols.data?.length) {
+      await supabase
+        .from("proposal_solutions")
+        .insert((sols.data as Record<string, unknown>[]).map(strip) as never);
+    }
     qc.invalidateQueries({ queryKey: ["proposals"] });
-    navigate({ to: "/propostas/$id/editar", params: { id: (data as { id: string }).id } });
+    navigate({ to: "/propostas/$id/editar", params: { id: newId } });
   }
 
   async function remove(p: Proposal) {

@@ -278,6 +278,20 @@ export const SECTION_ORDER: SectionKey[] = [
   "cta",
 ];
 
+/** Seções que só fazem sentido quando a proposta inclui Controle de Ponto. */
+export const PONTO_ONLY_SECTIONS: SectionKey[] = [
+  "impacto",
+  "calculadora",
+  "solucao",
+  "relogio",
+  "sistema",
+  "comparacao",
+  "implementacao",
+  "protecao",
+  "modalidade",
+  "completa",
+];
+
 export const TEMPLATE_CONSULTIVA: Record<SectionKey, boolean> = {
   capa: true,
   problema: true,

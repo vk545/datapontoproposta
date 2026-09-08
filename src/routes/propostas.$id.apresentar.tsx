@@ -93,7 +93,10 @@ function Present() {
       <div className="sticky bottom-0 border-t border-border bg-card/95 px-6 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
           <p className="text-xs uppercase tracking-widest text-muted-foreground">
-            {current ? SECTION_LABELS[current.key] : ""} · {index + 1}/{total}
+            {current
+              ? (SECTION_LABELS as Record<string, string>)[current.key] ??
+                (current.key === "cenarios" ? "Cenários" : "Solução")
+              : ""} · {index + 1}/{total}
           </p>
           <div className="mx-4 h-1 flex-1 overflow-hidden rounded-full bg-muted">
             <div

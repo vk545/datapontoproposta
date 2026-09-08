@@ -262,9 +262,13 @@ export type Database = {
       proposal_products: {
         Row: {
           area_code: string
+          benefits: Json
           billing: string
           created_at: string
+          description: string
+          features: Json
           id: string
+          image_url: string | null
           name: string
           product_id: string | null
           proposal_id: string
@@ -276,9 +280,13 @@ export type Database = {
         }
         Insert: {
           area_code?: string
+          benefits?: Json
           billing?: string
           created_at?: string
+          description?: string
+          features?: Json
           id?: string
+          image_url?: string | null
           name?: string
           product_id?: string | null
           proposal_id: string
@@ -290,9 +298,13 @@ export type Database = {
         }
         Update: {
           area_code?: string
+          benefits?: Json
           billing?: string
           created_at?: string
+          description?: string
+          features?: Json
           id?: string
+          image_url?: string | null
           name?: string
           product_id?: string | null
           proposal_id?: string
@@ -446,6 +458,7 @@ export type Database = {
       proposals: {
         Row: {
           approved_at: string | null
+          area_codes: string[]
           calculator: Json
           city: string | null
           client_id: string | null
@@ -491,6 +504,7 @@ export type Database = {
         }
         Insert: {
           approved_at?: string | null
+          area_codes?: string[]
           calculator?: Json
           city?: string | null
           client_id?: string | null
@@ -536,6 +550,7 @@ export type Database = {
         }
         Update: {
           approved_at?: string | null
+          area_codes?: string[]
           calculator?: Json
           city?: string | null
           client_id?: string | null

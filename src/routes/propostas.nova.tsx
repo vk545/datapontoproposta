@@ -13,15 +13,25 @@ import {
   DEFAULT_PRICES,
   NEEDS,
   NEED_OPTIONS,
+  PONTO_ONLY_SECTIONS,
   SECTION_LABELS,
   SECTION_ORDER,
   TEMPLATE_CONSULTIVA,
   TEMPLATE_ESSENCIAL,
-  calcInvestment,
   currency,
   type NeedKey,
   type SectionKey,
 } from "@/lib/dataponto";
+import { AreaCards, ProductPicker } from "@/components/proposal/SolutionPicker";
+import {
+  PONTO,
+  itemsTotals,
+  saveComposition,
+  totalInvestment,
+  useCatalog,
+  type ProposalItem,
+} from "@/lib/solutions";
+import type { Proposal } from "@/lib/proposal";
 
 export const Route = createFileRoute("/propostas/nova")({
   head: () => ({
@@ -46,7 +56,7 @@ export const Route = createFileRoute("/propostas/nova")({
   ),
 });
 
-const STEPS = ["Cliente", "Necessidade", "Solução", "Personalização", "Raio-X"];
+const STEPS = ["Cliente", "Soluções", "Necessidade", "Produtos", "Personalização", "Raio-X"];
 
 function NewProposal() {
   const navigate = useNavigate();
@@ -77,6 +87,15 @@ function NewProposal() {
   });
   const [prices, setPrices] = useState(DEFAULT_PRICES);
   const [sections, setSections] = useState<Record<SectionKey, boolean>>({ ...TEMPLATE_CONSULTIVA });
+  const [areaCodes, setAreaCodes] = useState<string[]>([PONTO]);
+  const [items, setItems] = useState<ProposalItem[]>([]);
+  const [why, setWhy] = useState<Record<string, string>>({});
+  const { data: catalog } = useCatalog();
+  const areas = catalog?.areas ?? [];
+  const products = catalog?.products ?? [];
+  const ponto = areaCodes.includes(PONTO);
+  const visibleItems = items.filter((i) => areaCodes.includes(i.area_code));
+  const areaName = (code: string) => areas.find((a) => a.code === code)?.name ?? code;
 
   useEffect(() => {
     if (!user) return;
@@ -97,16 +116,34 @@ function NewProposal() {
 
   const set = (k: keyof typeof form, v: string | number) => setForm({ ...form, [k]: v });
   const narrative = form.need_key ? NEEDS[form.need_key] : null;
-  const inv = calcInvestment({
-    modality: form.modality,
-    plan: form.system_plan,
-    deviceQty: form.device_qty,
-    prices,
-  });
+  const inv = totalInvestment(
+    {
+      modality: form.modality,
+      system_plan: form.system_plan,
+      device_qty: form.device_qty,
+      prices,
+      area_codes: areaCodes,
+    } as unknown as Proposal,
+    visibleItems,
+  );
+
+  /** Seções só de Controle de Ponto ficam desligadas quando a categoria não está na proposta. */
+  const sectionsFor = (base: Record<SectionKey, boolean>, withPonto: boolean) =>
+    withPonto
+      ? { ...base }
+      : (Object.fromEntries(
+          SECTION_ORDER.map((k) => [k, PONTO_ONLY_SECTIONS.includes(k) ? false : base[k]]),
+        ) as Record<SectionKey, boolean>);
 
   function applyTemplate(t: "consultiva" | "essencial") {
     setForm({ ...form, template: t });
-    setSections({ ...(t === "consultiva" ? TEMPLATE_CONSULTIVA : TEMPLATE_ESSENCIAL) });
+    setSections(sectionsFor(t === "consultiva" ? TEMPLATE_CONSULTIVA : TEMPLATE_ESSENCIAL, ponto));
+  }
+
+  function changeAreas(next: string[]) {
+    setAreaCodes(next);
+    const base = form.template === "consultiva" ? TEMPLATE_CONSULTIVA : TEMPLATE_ESSENCIAL;
+    setSections(sectionsFor(base, next.includes(PONTO)));
   }
 
   function applyRecommendation() {
@@ -125,6 +162,11 @@ function NewProposal() {
       setStep(0);
       return;
     }
+    if (!areaCodes.length) {
+      toast.error("Escolha ao menos uma solução.");
+      setStep(1);
+      return;
+    }
     setSaving(true);
     const { data, error } = await supabase
       .from("proposals")
@@ -141,21 +183,41 @@ function NewProposal() {
         seller_name: seller.name,
         seller_email: seller.email,
         seller_phone: seller.phone,
+        area_codes: areaCodes,
       } as never)
       .select("id")
       .single();
-    setSaving(false);
     if (error) {
+      setSaving(false);
       toast.error("Não foi possível criar a proposta.");
       return;
     }
+    const newId = (data as { id: string }).id;
+    try {
+      const codes = [
+        ...new Set([...(ponto ? [PONTO] : []), ...visibleItems.map((i) => i.area_code)]),
+      ];
+      await saveComposition(newId, {
+        areaCodes,
+        items: visibleItems,
+        solutions: codes.map((code) => ({
+          area_code: code,
+          area_id: areas.find((a) => a.code === code)?.id ?? null,
+          why_text: why[code] ?? "",
+        })),
+        totals: { monthly: inv.monthly, upfront: inv.upfront },
+      });
+    } catch {
+      toast.error("Proposta criada, mas os produtos não foram salvos. Revise na aba Soluções.");
+    }
+    setSaving(false);
     toast.success("Proposta criada.");
-    navigate({ to: "/propostas/$id/editar", params: { id: (data as { id: string }).id } });
+    navigate({ to: "/propostas/$id/editar", params: { id: newId } });
   }
 
   return (
     <>
-      <PageHeader title="Nova proposta" description="Primeiro o problema. Depois o investimento." />
+      <PageHeader title="Nova proposta" description="Cliente, solução, produtos e investimento." />
       <div className="p-8">
         <div className="mb-8 flex flex-wrap items-center gap-2">
           {STEPS.map((s, i) => (
@@ -230,6 +292,25 @@ function NewProposal() {
 
           {step === 1 ? (
             <div>
+              <p className="text-sm font-semibold">Qual solução está sendo apresentada?</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Selecione uma ou várias. A proposta mostrará somente os produtos e seções dessas
+                soluções.
+              </p>
+              <div className="mt-5">
+                <AreaCards areas={areas} value={areaCodes} onChange={changeAreas} />
+              </div>
+              {!areaCodes.length ? (
+                <p className="mt-4 flex items-start gap-2 rounded-lg border border-border bg-surface p-4 text-sm text-muted-foreground">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-brand" strokeWidth={1.75} />
+                  Escolha ao menos uma solução para continuar.
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          {step === 2 ? (
+            <div>
               <p className="text-sm font-semibold">Principal necessidade do cliente</p>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 {NEED_OPTIONS.map((o) => (
@@ -265,7 +346,16 @@ function NewProposal() {
             </div>
           ) : null}
 
-          {step === 2 ? (
+          {step === 3 ? (
+            <ProductPicker
+              areas={areas}
+              products={products}
+              areaCodes={areaCodes}
+              items={visibleItems}
+              onItems={setItems}
+              why={why}
+              onWhy={setWhy}
+              pontoSlot={
             <div className="space-y-8">
               {narrative ? (
                 <div className="rounded-lg border border-brand/30 bg-brand-soft p-5">
@@ -344,9 +434,11 @@ function NewProposal() {
                 </div>
               </div>
             </div>
+              }
+            />
           ) : null}
 
-          {step === 3 ? (
+          {step === 4 ? (
             <div className="space-y-8">
               <Choice
                 label="Formato da proposta"
@@ -368,7 +460,7 @@ function NewProposal() {
               <div>
                 <p className="text-sm font-semibold">Seções ativas</p>
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  {SECTION_ORDER.map((k) => (
+                  {SECTION_ORDER.filter((k) => ponto || !PONTO_ONLY_SECTIONS.includes(k)).map((k) => (
                     <label
                       key={k}
                       className="flex cursor-pointer items-center gap-3 rounded-lg border border-border px-4 py-2.5 text-sm"
@@ -399,7 +491,7 @@ function NewProposal() {
             </div>
           ) : null}
 
-          {step === 4 ? (
+          {step === 5 ? (
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 Raio-X da proposta
@@ -407,25 +499,34 @@ function NewProposal() {
               <dl className="mt-5 divide-y divide-border">
                 {[
                   ["Cliente", form.company_name || "—"],
+                  ["Soluções", areaCodes.map(areaName).join(" · ") || "—"],
                   ["Problema identificado", narrative?.label ?? "—"],
                   ["Cenário relatado", form.problem_text || "—"],
-                  [
-                    "Solução",
-                    `Relógio de ponto facial · ${form.device_qty} equipamento(s)`,
-                  ],
-                  ["Proteção", form.modality === "primme" ? "Comodato" : "Compra do equipamento"],
-                  [
-                    "Gestão",
-                    form.system_plan === "nenhum"
-                      ? "Sem sistema"
-                      : `Secullum RH ${form.system_plan === "pro" ? "Pro" : "Ultimate"}`,
-                  ],
+                  ...(ponto
+                    ? ([
+                        ["Controle de Ponto", `Relógio de ponto facial · ${form.device_qty} equipamento(s)`],
+                        ["Proteção", form.modality === "primme" ? "Comodato" : "Compra do equipamento"],
+                        [
+                          "Gestão",
+                          form.system_plan === "nenhum"
+                            ? "Sem sistema"
+                            : `Secullum RH ${form.system_plan === "pro" ? "Pro" : "Ultimate"}`,
+                        ],
+                      ] as [string, string][])
+                    : []),
+                  ...visibleItems.map(
+                    (i) =>
+                      [
+                        areaName(i.area_code),
+                        `${i.quantity}× ${i.name} · ${currency(itemsTotals([i]).monthly + itemsTotals([i]).upfront)}`,
+                      ] as [string, string],
+                  ),
                   [
                     "Investimento",
                     `${currency(inv.monthly)}/mês${inv.upfront ? ` + ${currency(inv.upfront)} inicial` : ""}`,
                   ],
                 ].map(([l, v]) => (
-                  <div key={l} className="grid grid-cols-[200px_1fr] gap-4 py-3.5 text-sm">
+                  <div key={`${l}${v}`} className="grid grid-cols-[200px_1fr] gap-4 py-3.5 text-sm">
                     <dt className="text-muted-foreground">{l}</dt>
                     <dd className="font-medium">{v}</dd>
                   </div>

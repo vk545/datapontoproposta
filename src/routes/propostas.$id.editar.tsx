@@ -19,11 +19,11 @@ import {
   SECTION_ORDER,
   STATUSES,
   STATUS_LABEL,
-  calcInvestment,
   currency,
   type SectionKey,
 } from "@/lib/dataponto";
 import { narrativeOf, pricesOf, sectionsOf, type Proposal } from "@/lib/proposal";
+import { PONTO, areaCodesOf, hasPonto, totalInvestment, useCatalog, useComposition } from "@/lib/solutions";
 
 export const Route = createFileRoute("/propostas/$id/editar")({
   head: () => ({
@@ -53,6 +53,8 @@ function Editor() {
   const [draft, setDraft] = useState<Proposal | null>(null);
   const [saving, setSaving] = useState(false);
 
+  const { data: comp } = useComposition(id);
+  const { data: catalog } = useCatalog({ activeOnly: false });
   const { data } = useQuery({
     queryKey: ["proposal", id],
     queryFn: async () => {
@@ -72,12 +74,10 @@ function Editor() {
 
   const prices = pricesOf(draft);
   const sections = sectionsOf(draft);
-  const inv = calcInvestment({
-    modality: draft.modality,
-    plan: draft.system_plan,
-    deviceQty: draft.device_qty,
-    prices,
-  });
+  const ponto = hasPonto(draft);
+  const extraItems = (comp?.items ?? []).filter((i) => i.area_code !== PONTO);
+  const inv = totalInvestment({ ...draft, prices }, extraItems);
+  const areaName = (code: string) => catalog?.areas.find((a) => a.code === code)?.name ?? code;
   const set = (patch: Partial<Proposal>) => setDraft({ ...draft, ...patch });
 
   async function save(extra: Partial<Proposal> = {}) {
@@ -147,8 +147,8 @@ function Editor() {
         <Tabs defaultValue="dados">
           <TabsList>
             <TabsTrigger value="dados">Cliente</TabsTrigger>
-            <TabsTrigger value="solucao">Solução e preços</TabsTrigger>
-            <TabsTrigger value="configurador">Configurador</TabsTrigger>
+            <TabsTrigger value="configurador">Soluções</TabsTrigger>
+            <TabsTrigger value="solucao">Controle de Ponto</TabsTrigger>
             <TabsTrigger value="secoes">Seções e textos</TabsTrigger>
             <TabsTrigger value="raiox">Raio-X</TabsTrigger>
             <TabsTrigger value="preview">Pré-visualizar</TabsTrigger>
@@ -276,6 +276,13 @@ function Editor() {
 
           <TabsContent value="solucao" className="mt-6">
             <Card>
+              {!ponto ? (
+                <p className="mb-6 rounded-lg border border-dashed border-border bg-surface p-4 text-sm text-muted-foreground">
+                  Esta proposta não inclui Controle de Ponto. Ative a categoria na aba{" "}
+                  <strong>Soluções</strong> para que relógio, sistema e modalidade entrem na proposta.
+                  Os campos abaixo ficam guardados, mas não são cobrados nem exibidos.
+                </p>
+              ) : null}
               <div className="grid gap-4 sm:grid-cols-2">
                 <F label="Modalidade">
                   <select
@@ -356,12 +363,21 @@ function Editor() {
                 <p className="mt-2 text-sm text-muted-foreground">
                   Investimento inicial: {currency(inv.upfront)}
                 </p>
+                {extraItems.length ? (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Inclui {currency(inv.extra.monthly)}/mês e {currency(inv.extra.upfront)} inicial das
+                    demais soluções.
+                  </p>
+                ) : null}
               </div>
             </Card>
           </TabsContent>
 
           <TabsContent value="configurador" className="mt-6">
-            <SolutionBuilder proposalId={id} />
+            <SolutionBuilder
+              proposal={draft}
+              onSaved={(patch) => setDraft((d) => (d ? { ...d, ...patch } : d))}
+            />
           </TabsContent>
 
           <TabsContent value="secoes" className="mt-6">
@@ -417,14 +433,22 @@ function Editor() {
                   ["Problema identificado", narrativeOf(draft).label],
                   ["Cenário relatado", draft.problem_text || "—"],
                   ["Impacto", "Tempo, retrabalho e custo operacional acumulados"],
-                  ["Solução", `Relógio de ponto facial · ${draft.device_qty} equipamento(s)`],
-                  ["Proteção", draft.modality === "primme" ? "Comodato" : "Compra"],
-                  [
-                    "Gestão",
-                    draft.system_plan === "nenhum"
-                      ? "Sem sistema"
-                      : `Secullum RH ${draft.system_plan === "pro" ? "Pro" : "Ultimate"}`,
-                  ],
+                  ["Soluções", areaCodesOf(draft).map(areaName).join(" · ")],
+                  ...(ponto
+                    ? ([
+                        ["Controle de Ponto", `Relógio de ponto facial · ${draft.device_qty} equipamento(s)`],
+                        ["Proteção", draft.modality === "primme" ? "Comodato" : "Compra"],
+                        [
+                          "Gestão",
+                          draft.system_plan === "nenhum"
+                            ? "Sem sistema"
+                            : `Secullum RH ${draft.system_plan === "pro" ? "Pro" : "Ultimate"}`,
+                        ],
+                      ] as [string, string][])
+                    : []),
+                  ...extraItems.map(
+                    (i) => [areaName(i.area_code), `${i.quantity}× ${i.name}`] as [string, string],
+                  ),
                   [
                     "Investimento",
                     `${currency(inv.monthly)}/mês${inv.upfront ? ` + ${currency(inv.upfront)}` : ""}`,
@@ -434,7 +458,7 @@ function Editor() {
                     `Enviada: ${draft.sent_at ? "sim" : "não"} · Visualizada: ${draft.first_viewed_at ? "sim" : "não"} · Aprovada: ${draft.approved_at ? "sim" : "não"}`,
                   ],
                 ].map(([l, v]) => (
-                  <div key={l} className="grid gap-1 py-3.5 text-sm sm:grid-cols-[220px_1fr]">
+                  <div key={`${l}${v}`} className="grid gap-1 py-3.5 text-sm sm:grid-cols-[220px_1fr]">
                     <dt className="text-muted-foreground">{l}</dt>
                     <dd className="font-medium">{v}</dd>
                   </div>
