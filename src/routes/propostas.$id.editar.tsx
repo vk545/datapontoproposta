@@ -147,6 +147,7 @@ function Editor() {
           <TabsList>
             <TabsTrigger value="dados">Cliente</TabsTrigger>
             <TabsTrigger value="solucao">Solução e preços</TabsTrigger>
+            <TabsTrigger value="configurador">Configurador</TabsTrigger>
             <TabsTrigger value="secoes">Seções e textos</TabsTrigger>
             <TabsTrigger value="raiox">Raio-X</TabsTrigger>
             <TabsTrigger value="preview">Pré-visualizar</TabsTrigger>
