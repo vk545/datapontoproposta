@@ -1,12 +1,14 @@
 import { useMemo } from "react";
 import { buildSections } from "./sections";
 import { Reveal } from "./motion";
+import { GenericSection } from "./GenericSections";
 import { AreaModule, ScenariosBlock } from "./SolutionModules";
 import { sectionsOf, type Proposal } from "@/lib/proposal";
-import { PONTO_ONLY_SECTIONS, SECTION_ORDER } from "@/lib/dataponto";
+import { GENERIC_SECTIONS, PONTO_ONLY_SECTIONS, SECTION_ORDER } from "@/lib/dataponto";
 import {
   EMPTY_COMPOSITION,
   PONTO,
+  areaCodesOf,
   groupByArea,
   hasPonto,
   useCatalog,
@@ -16,10 +18,12 @@ import {
 export type VisibleSection = { key: string; node: React.ReactNode };
 
 /**
- * Lista de seções visíveis da proposta.
- * - Seções clássicas de Controle de Ponto só aparecem quando a categoria "ponto" está na proposta.
- * - Cada outra categoria (acesso, veicular, monitoramento…) vira um módulo próprio,
- *   inserido antes do Investimento.
+ * Lista de seções visíveis da proposta, montada a partir do registro de seções.
+ * - Seções genéricas (contexto, solução proposta, como funciona, composição…)
+ *   servem para qualquer solução.
+ * - Seções clássicas de Controle de Ponto só aparecem quando a categoria "ponto"
+ *   está na proposta.
+ * - Cada outra categoria vira um módulo próprio, inserido antes do Investimento.
  */
 export function useVisibleSections(proposal: Proposal, publicView = false): VisibleSection[] {
   const { data: comp } = useComposition(proposal.id);
@@ -32,6 +36,12 @@ export function useVisibleSections(proposal: Proposal, publicView = false): Visi
     const enabled = sectionsOf(proposal);
     const ponto = hasPonto(proposal);
     const all = buildSections(proposal, { publicView, items: c.items, areaNames });
+    const ctx = {
+      proposal,
+      items: c.items,
+      areaCodes: areaCodesOf(proposal),
+      areaNames,
+    };
 
     const extraItems = c.items.filter((i) => i.area_code !== PONTO);
     const groups = [...groupByArea(extraItems).entries()].sort(
@@ -60,6 +70,10 @@ export function useVisibleSections(proposal: Proposal, publicView = false): Visi
       if ((k === "investimento" || k === "cta") && !inserted) {
         out.push(...modules);
         inserted = true;
+      }
+      if (GENERIC_SECTIONS.includes(k)) {
+        out.push({ key: k, node: <GenericSection sectionKey={k} ctx={ctx} /> });
+        continue;
       }
       out.push({ key: k, node: all.find((s) => s.key === k)?.node ?? null });
     }

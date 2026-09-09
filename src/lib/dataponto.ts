@@ -231,13 +231,21 @@ export const DEFAULT_PRICES: Prices = { equipment: 1020, primme: 58, pro: 73, ul
 export type SectionKey =
   | "capa"
   | "problema"
+  | "contexto"
   | "impacto"
   | "calculadora"
+  | "solucao_proposta"
   | "solucao"
+  | "como_funciona"
   | "relogio"
   | "sistema"
   | "comparacao"
+  | "composicao"
+  | "recursos"
+  | "beneficios"
+  | "implantacao"
   | "implementacao"
+  | "diferenciais"
   | "protecao"
   | "modalidade"
   | "completa"
@@ -247,13 +255,21 @@ export type SectionKey =
 export const SECTION_LABELS: Record<SectionKey, string> = {
   capa: "Capa",
   problema: "O problema",
+  contexto: "Contexto / Problema",
   impacto: "Impacto",
   calculadora: "Calculadora de impacto",
+  solucao_proposta: "Solução proposta",
   solucao: "A solução",
+  como_funciona: "Como funciona",
   relogio: "Relógio de ponto facial",
   sistema: "Sistema de gestão",
   comparacao: "Comparação Pro x Ultimate",
+  composicao: "Composição da solução",
+  recursos: "Recursos",
+  beneficios: "Benefícios",
+  implantacao: "Implantação",
   implementacao: "Implementação",
+  diferenciais: "Diferenciais / Proteção",
   protecao: "Proteção e continuidade",
   modalidade: "Compra x Comodato",
   completa: "A solução completa",
@@ -264,18 +280,38 @@ export const SECTION_LABELS: Record<SectionKey, string> = {
 export const SECTION_ORDER: SectionKey[] = [
   "capa",
   "problema",
+  "contexto",
   "impacto",
   "calculadora",
+  "solucao_proposta",
   "solucao",
+  "como_funciona",
   "relogio",
   "sistema",
   "comparacao",
+  "composicao",
+  "recursos",
+  "beneficios",
+  "implantacao",
   "implementacao",
+  "diferenciais",
   "protecao",
   "modalidade",
   "completa",
   "investimento",
   "cta",
+];
+
+/** Seções genéricas do novo modelo modular (servem para qualquer solução). */
+export const GENERIC_SECTIONS: SectionKey[] = [
+  "contexto",
+  "solucao_proposta",
+  "como_funciona",
+  "composicao",
+  "recursos",
+  "beneficios",
+  "implantacao",
+  "diferenciais",
 ];
 
 /** Seções que só fazem sentido quando a proposta inclui Controle de Ponto. */
@@ -292,7 +328,13 @@ export const PONTO_ONLY_SECTIONS: SectionKey[] = [
   "completa",
 ];
 
+const GENERIC_OFF = Object.fromEntries(GENERIC_SECTIONS.map((k) => [k, false])) as Record<
+  SectionKey,
+  boolean
+>;
+
 export const TEMPLATE_CONSULTIVA: Record<SectionKey, boolean> = {
+  ...GENERIC_OFF,
   capa: true,
   problema: true,
   impacto: true,
@@ -310,6 +352,7 @@ export const TEMPLATE_CONSULTIVA: Record<SectionKey, boolean> = {
 };
 
 export const TEMPLATE_ESSENCIAL: Record<SectionKey, boolean> = {
+  ...GENERIC_OFF,
   capa: true,
   problema: false,
   impacto: false,
@@ -325,6 +368,7 @@ export const TEMPLATE_ESSENCIAL: Record<SectionKey, boolean> = {
   investimento: true,
   cta: true,
 };
+
 
 export type CalculatorInput = {
   enabled?: boolean;
