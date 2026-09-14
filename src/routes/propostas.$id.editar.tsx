@@ -15,14 +15,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   NEED_OPTIONS,
-  SECTION_LABELS,
-  SECTION_ORDER,
   STATUSES,
   STATUS_LABEL,
   currency,
-  type SectionKey,
 } from "@/lib/dataponto";
 import { narrativeOf, pricesOf, sectionsOf, type Proposal } from "@/lib/proposal";
+import { bodyKey, defaultContent, SECTION_REGISTRY, titleKey } from "@/lib/sections-model";
 import { PONTO, areaCodesOf, hasPonto, totalInvestment, useCatalog, useComposition } from "@/lib/solutions";
 
 export const Route = createFileRoute("/propostas/$id/editar")({
@@ -149,7 +147,7 @@ function Editor() {
             <TabsTrigger value="dados">Cliente</TabsTrigger>
             <TabsTrigger value="configurador">Soluções</TabsTrigger>
             <TabsTrigger value="solucao">Controle de Ponto</TabsTrigger>
-            <TabsTrigger value="secoes">Seções e textos</TabsTrigger>
+            <TabsTrigger value="secoes">Personalizar proposta</TabsTrigger>
             <TabsTrigger value="raiox">Raio-X</TabsTrigger>
             <TabsTrigger value="preview">Pré-visualizar</TabsTrigger>
           </TabsList>
@@ -382,22 +380,65 @@ function Editor() {
 
           <TabsContent value="secoes" className="mt-6">
             <Card>
-              <p className="text-sm font-semibold">Módulos ativáveis</p>
-              <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                {SECTION_ORDER.map((k: SectionKey) => (
-                  <label
-                    key={k}
-                    className="flex cursor-pointer items-center gap-3 rounded-lg border border-border px-4 py-2.5 text-sm"
-                  >
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 accent-[var(--brand)]"
-                      checked={sections[k]}
-                      onChange={(e) => set({ sections: { ...sections, [k]: e.target.checked } })}
-                    />
-                    {SECTION_LABELS[k]}
-                  </label>
-                ))}
+              <p className="text-sm font-semibold">Personalizar proposta</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Ative somente as seções que fazem sentido e ajuste os textos da proposta.
+              </p>
+              <div className="mt-4 divide-y divide-border rounded-lg border border-border">
+                {SECTION_REGISTRY.filter((def) => ponto || !def.pontoOnly).map((def) => {
+                  const fallback = defaultContent(def.key, {
+                    areaLabel: areaCodesOf(draft).map(areaName).join(", ") || "a solução",
+                    company: draft.company_name || "sua empresa",
+                  });
+                  return (
+                    <div key={def.key} className="p-4">
+                      <label className="flex cursor-pointer items-center gap-3 text-sm font-medium">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 accent-[var(--brand)]"
+                          checked={sections[def.key]}
+                          onChange={(e) =>
+                            set({ sections: { ...sections, [def.key]: e.target.checked } })
+                          }
+                        />
+                        {def.label}
+                      </label>
+                      {def.generic && sections[def.key] ? (
+                        <div className="mt-4 grid gap-4 border-l-2 border-brand/30 pl-7">
+                          <F label="Título">
+                            <Input
+                              value={draft.texts?.[titleKey(def.key)] ?? ""}
+                              placeholder={fallback.title}
+                              onChange={(e) =>
+                                set({
+                                  texts: {
+                                    ...(draft.texts ?? {}),
+                                    [titleKey(def.key)]: e.target.value,
+                                  },
+                                })
+                              }
+                            />
+                          </F>
+                          <F label="Texto de apoio">
+                            <Textarea
+                              rows={3}
+                              value={draft.texts?.[bodyKey(def.key)] ?? ""}
+                              placeholder={fallback.body}
+                              onChange={(e) =>
+                                set({
+                                  texts: {
+                                    ...(draft.texts ?? {}),
+                                    [bodyKey(def.key)]: e.target.value,
+                                  },
+                                })
+                              }
+                            />
+                          </F>
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
               </div>
               <p className="mt-8 text-sm font-semibold">Textos da capa</p>
               <div className="mt-3 grid gap-4">

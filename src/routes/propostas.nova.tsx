@@ -32,6 +32,7 @@ import {
   type ProposalItem,
 } from "@/lib/solutions";
 import type { Proposal } from "@/lib/proposal";
+import { recommendedSections } from "@/lib/sections-model";
 
 export const Route = createFileRoute("/propostas/nova")({
   head: () => ({
@@ -127,23 +128,17 @@ function NewProposal() {
     visibleItems,
   );
 
-  /** Seções só de Controle de Ponto ficam desligadas quando a categoria não está na proposta. */
-  const sectionsFor = (base: Record<SectionKey, boolean>, withPonto: boolean) =>
-    withPonto
-      ? { ...base }
-      : (Object.fromEntries(
-          SECTION_ORDER.map((k) => [k, PONTO_ONLY_SECTIONS.includes(k) ? false : base[k]]),
-        ) as Record<SectionKey, boolean>);
-
   function applyTemplate(t: "consultiva" | "essencial") {
     setForm({ ...form, template: t });
-    setSections(sectionsFor(t === "consultiva" ? TEMPLATE_CONSULTIVA : TEMPLATE_ESSENCIAL, ponto));
+    setSections(
+      recommendedSections(t === "consultiva" ? TEMPLATE_CONSULTIVA : TEMPLATE_ESSENCIAL, areaCodes),
+    );
   }
 
   function changeAreas(next: string[]) {
     setAreaCodes(next);
     const base = form.template === "consultiva" ? TEMPLATE_CONSULTIVA : TEMPLATE_ESSENCIAL;
-    setSections(sectionsFor(base, next.includes(PONTO)));
+    setSections(recommendedSections(base, next));
   }
 
   function applyRecommendation() {
