@@ -65,7 +65,7 @@ export const AREA_FLOWS: Record<string, string[]> = {
 
 export const flowFor = (areaCodes: string[]): string[] => {
   const primary = areaCodes.find((c) => AREA_FLOWS[c]) ?? PONTO;
-  return AREA_FLOWS[primary] ?? AREA_FLOWS[PONTO]!;
+  return AREA_FLOWS[primary] ?? AREA_FLOWS[PONTO] ?? [];
 };
 
 /** Conteúdo sugerido de cada seção de texto, conforme as soluções da proposta. */
