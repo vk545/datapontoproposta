@@ -429,6 +429,57 @@ export type Database = {
           },
         ]
       }
+      proposal_templates: {
+        Row: {
+          area_codes: string[]
+          created_at: string
+          id: string
+          name: string
+          owner_id: string
+          prices: Json
+          products: Json
+          scenarios: Json
+          sections: Json
+          solution_settings: Json
+          solutions: Json
+          template: string
+          texts: Json
+          updated_at: string
+        }
+        Insert: {
+          area_codes?: string[]
+          created_at?: string
+          id?: string
+          name: string
+          owner_id?: string
+          prices?: Json
+          products?: Json
+          scenarios?: Json
+          sections?: Json
+          solution_settings?: Json
+          solutions?: Json
+          template?: string
+          texts?: Json
+          updated_at?: string
+        }
+        Update: {
+          area_codes?: string[]
+          created_at?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          prices?: Json
+          products?: Json
+          scenarios?: Json
+          sections?: Json
+          solution_settings?: Json
+          solutions?: Json
+          template?: string
+          texts?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       proposal_views: {
         Row: {
           id: string
