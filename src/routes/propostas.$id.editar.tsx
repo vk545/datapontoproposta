@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Presentation, Save, Share2, Trash2 } from "lucide-react";
+import { Library, Presentation, Save, Share2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, PageHeader } from "@/components/AppShell";
@@ -14,6 +14,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   NEED_OPTIONS,
   STATUSES,
   STATUS_LABEL,
@@ -22,6 +30,7 @@ import {
 import { narrativeOf, pricesOf, sectionsOf, type Proposal } from "@/lib/proposal";
 import { bodyKey, defaultContent, SECTION_REGISTRY, titleKey } from "@/lib/sections-model";
 import { PONTO, areaCodesOf, hasPonto, totalInvestment, useCatalog, useComposition } from "@/lib/solutions";
+import { saveProposalTemplate } from "@/lib/proposal-templates";
 
 export const Route = createFileRoute("/propostas/$id/editar")({
   head: () => ({
@@ -50,6 +59,9 @@ function Editor() {
   const navigate = useNavigate();
   const [draft, setDraft] = useState<Proposal | null>(null);
   const [saving, setSaving] = useState(false);
+  const [templateOpen, setTemplateOpen] = useState(false);
+  const [templateName, setTemplateName] = useState("");
+  const [savingTemplate, setSavingTemplate] = useState(false);
 
   const { data: comp } = useComposition(id);
   const { data: catalog } = useCatalog({ activeOnly: false });
@@ -115,6 +127,21 @@ function Editor() {
     navigate({ to: "/propostas" });
   }
 
+  async function saveAsTemplate() {
+    if (!draft || !comp || !templateName.trim()) return;
+    setSavingTemplate(true);
+    try {
+      await saveProposalTemplate(templateName, { ...draft, prices, sections }, comp);
+      setTemplateOpen(false);
+      setTemplateName("");
+      toast.success("Modelo salvo para as próximas propostas.");
+    } catch {
+      toast.error("Não foi possível salvar o modelo.");
+    } finally {
+      setSavingTemplate(false);
+    }
+  }
+
   return (
     <>
       <PageHeader
@@ -123,6 +150,10 @@ function Editor() {
         actions={
           <>
             <StatusBadge status={draft.status} />
+            <Button variant="outline" onClick={() => setTemplateOpen(true)} disabled={!comp}>
+              <Library className="mr-1.5 h-4 w-4" strokeWidth={1.75} />
+              Salvar como modelo
+            </Button>
             <Button variant="outline" asChild>
               <Link to="/propostas/$id/apresentar" params={{ id }}>
                 <Presentation className="mr-1.5 h-4 w-4" strokeWidth={1.75} />
@@ -515,6 +546,38 @@ function Editor() {
           </TabsContent>
         </Tabs>
       </div>
+      <Dialog open={templateOpen} onOpenChange={setTemplateOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Salvar como modelo</DialogTitle>
+            <DialogDescription>
+              Salve soluções, produtos, preços, seções e textos para reutilizar em novas propostas.
+            </DialogDescription>
+          </DialogHeader>
+          <div>
+            <Label htmlFor="template-name">Nome do modelo</Label>
+            <Input
+              id="template-name"
+              className="mt-1.5"
+              value={templateName}
+              onChange={(event) => setTemplateName(event.target.value)}
+              placeholder="Ex.: Catraca Facial"
+              autoFocus
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Se já existir um modelo com esse nome, ele será atualizado.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTemplateOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={saveAsTemplate} disabled={!templateName.trim() || savingTemplate}>
+              {savingTemplate ? "Salvando…" : "Salvar modelo"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

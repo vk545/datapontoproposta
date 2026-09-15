@@ -10,6 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   DEFAULT_PRICES,
   NEEDS,
   NEED_OPTIONS,
@@ -30,9 +37,11 @@ import {
   totalInvestment,
   useCatalog,
   type ProposalItem,
+  type ProposalScenario,
 } from "@/lib/solutions";
 import type { Proposal } from "@/lib/proposal";
 import { recommendedSections } from "@/lib/sections-model";
+import { useProposalTemplates, type ProposalTemplate } from "@/lib/proposal-templates";
 
 export const Route = createFileRoute("/propostas/nova")({
   head: () => ({
@@ -88,9 +97,13 @@ function NewProposal() {
   });
   const [prices, setPrices] = useState(DEFAULT_PRICES);
   const [sections, setSections] = useState<Record<SectionKey, boolean>>({ ...TEMPLATE_CONSULTIVA });
+  const [texts, setTexts] = useState<Record<string, string>>({});
   const [areaCodes, setAreaCodes] = useState<string[]>([PONTO]);
   const [items, setItems] = useState<ProposalItem[]>([]);
   const [why, setWhy] = useState<Record<string, string>>({});
+  const [scenarios, setScenarios] = useState<ProposalScenario[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState("none");
+  const { data: savedTemplates = [] } = useProposalTemplates();
   const { data: catalog } = useCatalog();
   const areas = catalog?.areas ?? [];
   const products = catalog?.products ?? [];
@@ -141,6 +154,30 @@ function NewProposal() {
     setSections(recommendedSections(base, next));
   }
 
+  function applySavedTemplate(id: string) {
+    setSelectedTemplateId(id);
+    if (id === "none") return;
+    const saved = savedTemplates.find((item) => item.id === id);
+    if (!saved) return;
+    const settings = saved.solution_settings;
+    setForm({
+      ...form,
+      template: saved.template,
+      modality: settings.modality,
+      system_plan: settings.system_plan,
+      licenses: settings.licenses,
+      device_qty: settings.device_qty,
+    });
+    setAreaCodes([...saved.area_codes]);
+    setSections({ ...saved.sections });
+    setTexts({ ...saved.texts });
+    setPrices({ ...DEFAULT_PRICES, ...saved.prices });
+    setItems(saved.products.map((item) => ({ ...item })));
+    setWhy(Object.fromEntries(saved.solutions.map((solution) => [solution.area_code, solution.why_text])));
+    setScenarios(saved.scenarios.map((scenario) => ({ ...scenario })));
+    toast.success(`Modelo “${saved.name}” aplicado.`);
+  }
+
   function applyRecommendation() {
     if (!narrative) return;
     setForm({
@@ -171,7 +208,7 @@ function NewProposal() {
         valid_until: form.valid_until || null,
         prices,
         sections,
-        texts: {},
+        texts,
         calculator: {},
         monthly_total: inv.monthly,
         upfront_total: inv.upfront,
@@ -201,6 +238,7 @@ function NewProposal() {
           why_text: why[code] ?? "",
         })),
         totals: { monthly: inv.monthly, upfront: inv.upfront },
+        scenarios,
       });
     } catch {
       toast.error("Proposta criada, mas os produtos não foram salvos. Revise na aba Soluções.");
@@ -242,6 +280,27 @@ function NewProposal() {
         <div className="mt-8 max-w-3xl rounded-xl border border-border bg-card p-8 shadow-soft">
           {step === 0 ? (
             <div className="grid gap-4 sm:grid-cols-2">
+              {savedTemplates.length ? (
+                <div className="sm:col-span-2 mb-2 rounded-lg border border-brand/30 bg-brand-soft p-4">
+                  <Label>Começar com um modelo salvo</Label>
+                  <Select value={selectedTemplateId} onValueChange={applySavedTemplate}>
+                    <SelectTrigger className="mt-2 bg-background">
+                      <SelectValue placeholder="Escolha um modelo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Sem modelo</SelectItem>
+                      {savedTemplates.map((saved) => (
+                        <SelectItem key={saved.id} value={saved.id}>
+                          {saved.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    O modelo preenche soluções, produtos e personalização. Os dados do cliente continuam vazios.
+                  </p>
+                </div>
+              ) : null}
               <Field label="Empresa" full>
                 <Input
                   value={form.company_name}
